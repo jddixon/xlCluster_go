@@ -1,0 +1,7 @@
+xlCluster_go/TODO
+
+2014-11-17
+    * Flesh out README.md and ghpDoc/index.md
+    * need testCluster_test.go
+    * need cluster.go
+        - and cluster_test.go ?

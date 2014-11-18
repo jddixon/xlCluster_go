@@ -1,0 +1,8 @@
+xlCluster_go/CHANGES
+-----------------------------------------------------------------------------
+The version number and date in this file must be kept in sync with version.go
+-----------------------------------------------------------------------------
+
+v1.7.0
+    2014-11-17
+        * split from xlReg_go v1.6.4                                SLOC 
