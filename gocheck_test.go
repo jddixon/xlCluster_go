@@ -106,7 +106,6 @@ func (s *XLSuite) makeHostAndKeys(c *C, rng *xr.PRNG,
 // Make a client, a cluster member as seen by the registry server.
 // Using functions must check to ensure members have unique names
 
-
 // Make a cluster member as seen by registry clients.
 // Using functions must check to ensure members have unique names
 
@@ -125,4 +124,3 @@ func (s *XLSuite) makeAMemberInfo(c *C, rng *xr.PRNG) *MemberInfo {
 		Peer:  peer,
 	}
 }
-

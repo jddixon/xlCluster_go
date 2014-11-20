@@ -14,17 +14,17 @@ import (
 	"time"
 )
 
-// Create a test cluster using NewTestCluster() without using the 
+// Create a test cluster using NewCluster() without using the
 // xlReg registry.
-func (s *XLSuite) makeTestCluster(c *C, rng *xr.PRNG, name string, 
-	nodeID *xi.NodeID, attrs uint64, size, epCount uint32) (tc *TestCluster) {
+func (s *XLSuite) makeTestCluster(c *C, rng *xr.PRNG, name string,
+	nodeID *xi.NodeID, attrs uint64, size, epCount uint32) (tc *Cluster) {
 
 	var (
 		members          []*ClusterMember
 		ckPrivs, skPrivs []*rsa.PrivateKey
 	)
-	
-	tc, err := NewTestCluster(name, nodeID, attrs, size, epCount)
+
+	tc, err := NewCluster(name, nodeID, attrs, size, epCount)
 	c.Assert(err, IsNil)
 	c.Assert(tc, NotNil)
 	// defer closing each member's acceptors, unless nil

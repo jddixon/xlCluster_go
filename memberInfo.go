@@ -32,14 +32,12 @@ func NewMemberInfo(attrs uint64, peer *xn.Peer) (
 
 	// all attrs bits are zero by default
 
-
 	mi = &MemberInfo{
 		Attrs: attrs,
 		Peer:  peer,
 	}
 	return
 }
-
 
 // EQUAL ////////////////////////////////////////////////////////////
 

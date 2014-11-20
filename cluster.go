@@ -3,10 +3,7 @@ package cluster
 // xlReg_go/testCluster.go
 
 // This file contains functions and structures used to create
-// and manage and manage clusters of ClusterMembers.  As member attributes
-// (nodeIDs, keys, etc) are set by a random number generator and ports are
-// on localhost (127.0.0.1) , these functions are structures are primarily 
-// for use in testing.
+// and manage and manage clusters of ClusterMembers.
 
 import (
 	"bytes"
@@ -24,20 +21,21 @@ import (
 
 var _ = fmt.Print
 
-type TestCluster struct {
+type Cluster struct {
 	Name            string // must be unique within the registry
 	ID              []byte // must be globally unique
 	Attrs           uint64 // a field of bit flags
-	Size            uint32 // a maximum; must be > 0
+	curSize         uint32 // current size, may not exceed maxSize
+	maxSize         uint32 // a maximum; must be > 0
 	EPCount         uint32 // a positive integer, for now usually 1 or 2
 	ClMembers       []*ClusterMember
 	ClMembersByName map[string]*ClusterMember
 	ClMembersByID   ha.HAMT
-	mu              sync.RWMutex
+	Mu              sync.RWMutex
 }
 
-func NewTestCluster(name string, id *xi.NodeID, attrs uint64,
-	size, epCount uint32) (tc *TestCluster, err error) {
+func NewCluster(name string, id *xi.NodeID, attrs uint64,
+	maxSize, epCount uint32) (tc *Cluster, err error) {
 
 	var m ha.HAMT
 
@@ -48,19 +46,19 @@ func NewTestCluster(name string, id *xi.NodeID, attrs uint64,
 	if epCount < 1 {
 		err = ClusterMembersMustHaveEndPoint
 	}
-	if err == nil && size < 1 {
+	if err == nil && maxSize < 1 {
 		err = ClusterMustHaveMember
 	} else {
-		t := uint(xm.NextExp2_32(size))
+		t := uint(xm.NextExp2_32(maxSize))
 		m, err = ha.NewHAMT(DEFAULT_W, t)
 	}
 	if err == nil {
-		tc = &TestCluster{
+		tc = &Cluster{
 			Attrs:           attrs,
 			Name:            name,
 			ID:              id.Value(),
 			EPCount:         epCount,
-			Size:            size,
+			maxSize:         maxSize,
 			ClMembersByName: nameMap,
 			ClMembersByID:   m,
 		}
@@ -70,26 +68,29 @@ func NewTestCluster(name string, id *xi.NodeID, attrs uint64,
 
 // ATTRIBUTES ///////////////////////////////////////////////
 
-func (tc *TestCluster) GetName() string {
+func (tc *Cluster) GetName() string {
 	return tc.Name
 }
-func (tc *TestCluster) GetNodeID() (id *xi.NodeID) {
+func (tc *Cluster) GetNodeID() (id *xi.NodeID) {
 	id, _ = xi.New(tc.ID)
 	return
 }
 
-func (tc *TestCluster) GetSize() uint32 {
+func (tc *Cluster) GetCurSize() uint32 {
 	var curSize uint32
-	tc.mu.RLock() // <-------------------------------------
+	tc.Mu.RLock() // <-------------------------------------
 	curSize = uint32(len(tc.ClMembers))
-	tc.mu.RUnlock() // <-----------------------------------
+	tc.Mu.RUnlock() // <-----------------------------------
 	return curSize
+}
+func (tc *Cluster) GetMaxSize() uint32 {
+	return tc.maxSize
 }
 
 // UTILITY FUNCTIONS ////////////////////////////////////////////////
 
 //
-func (tc *TestCluster) AddToCluster(node *xn.Node, attrs uint64) (
+func (tc *Cluster) AddToCluster(node *xn.Node, attrs uint64) (
 	member *ClusterMember, err error) {
 
 	nodeID, err := xi.New(tc.ID)
@@ -99,7 +100,7 @@ func (tc *TestCluster) AddToCluster(node *xn.Node, attrs uint64) (
 			ClusterName:  tc.Name,
 			ClusterID:    nodeID,
 			ClusterAttrs: tc.Attrs,
-			ClusterSize:  tc.Size,
+			ClusterSize:  tc.maxSize,
 			EPCount:      tc.EPCount, // need to check
 			SelfIndex:    uint32(len(tc.ClMembers)),
 			// ClMembers not set
@@ -112,14 +113,14 @@ func (tc *TestCluster) AddToCluster(node *xn.Node, attrs uint64) (
 	return
 }
 
-func (tc *TestCluster) AddMember(member *ClusterMember) (err error) {
+func (tc *Cluster) AddMember(member *ClusterMember) (err error) {
 
 	// verify no existing member has the same name
 	name := member.GetName()
 
-	tc.mu.RLock() // <------------------------------------
+	tc.Mu.RLock() // <------------------------------------
 	_, ok := tc.ClMembersByName[name]
-	tc.mu.RUnlock() // <------------------------------------
+	tc.Mu.RUnlock() // <------------------------------------
 
 	if ok {
 		// DEBUG
@@ -133,17 +134,17 @@ func (tc *TestCluster) AddMember(member *ClusterMember) (err error) {
 			bKey  ha.BytesKey
 		)
 		// check for entry in HAMT
-		tc.mu.RLock() // <---------------------------------
+		tc.Mu.RLock() // <---------------------------------
 		bKey, err = ha.NewBytesKey(tc.ID)
 		entry, err = tc.ClMembersByID.Find(bKey)
-		tc.mu.RUnlock() // <-------------------------------
+		tc.Mu.RUnlock() // <-------------------------------
 		if err == nil {
 			if entry != nil {
 				err = ClusterMemberIDInUse
 			}
 		}
 		if err == nil {
-			tc.mu.Lock()               // <------------------
+			tc.Mu.Lock()               // <------------------
 			index := len(tc.ClMembers) // DEBUG
 			_ = index                  // we might want to use this
 			tc.ClMembers = append(tc.ClMembers, member)
@@ -152,14 +153,14 @@ func (tc *TestCluster) AddMember(member *ClusterMember) (err error) {
 			if err == nil {
 				err = tc.ClMembersByID.Insert(bKey, member)
 			}
-			tc.mu.Unlock() // <----------------------------
+			tc.Mu.Unlock() // <----------------------------
 		}
 	}
 	return
 }
 
-func (tc *TestCluster) CloseAcceptors() {
-	members :=  tc.ClMembers		//  []*ClusterMember) 
+func (tc *Cluster) CloseAcceptors() {
+	members := tc.ClMembers //  []*ClusterMember)
 	if members != nil {
 		for i := 0; i < len(members); i++ {
 			node := members[i].Node
@@ -173,8 +174,9 @@ func (tc *TestCluster) CloseAcceptors() {
 		}
 	}
 }
+
 // EQUAL ////////////////////////////////////////////////////////////
-func (tc *TestCluster) Equal(any interface{}) bool {
+func (tc *Cluster) Equal(any interface{}) bool {
 
 	if any == tc {
 		return true
@@ -183,12 +185,12 @@ func (tc *TestCluster) Equal(any interface{}) bool {
 		return false
 	}
 	switch v := any.(type) {
-	case *TestCluster:
+	case *Cluster:
 		_ = v
 	default:
 		return false
 	}
-	other := any.(*TestCluster) // type assertion
+	other := any.(*Cluster) // type assertion
 	if tc.Attrs != other.Attrs {
 		// DEBUG
 		fmt.Printf("tc.Equal: ATTRS DIFFER %s vs %s\n", tc.Attrs, other.Attrs)
@@ -216,22 +218,22 @@ func (tc *TestCluster) Equal(any interface{}) bool {
 		// END
 		return false
 	}
-	if tc.Size != other.Size {
+	if tc.maxSize != other.maxSize {
 		// DEBUG
-		fmt.Printf("tc.Equal: SIZES DIFFER %d vs %d\n",
-			tc.Size, other.Size)
+		fmt.Printf("tc.Equal: MAX SIZES DIFFER %d vs %d\n",
+			tc.maxSize, other.maxSize)
 		// END
 		return false
 	}
-	if tc.GetSize() != other.GetSize() {
+	if tc.GetCurSize() != other.GetCurSize() {
 		// DEBUG
 		fmt.Printf("tc.Equal:ACTUAL SIZES DIFFER %d vs %d\n",
-			tc.GetSize(), other.GetSize())
+			tc.GetCurSize(), other.GetCurSize())
 		// END
 		return false
 	}
 	// Members			[]*ClientInfo
-	for i := uint32(0); i < tc.GetSize(); i++ {
+	for i := uint32(0); i < tc.GetCurSize(); i++ {
 		rcMember := tc.ClMembers[i]
 		otherMember := other.ClMembers[i]
 		if !rcMember.Equal(otherMember) {
@@ -243,7 +245,7 @@ func (tc *TestCluster) Equal(any interface{}) bool {
 
 // SERIALIZATION ////////////////////////////////////////////////////
 
-func (tc *TestCluster) Strings() (ss []string) {
+func (tc *Cluster) Strings() (ss []string) {
 
 	ss = []string{"testCluster {"}
 
@@ -251,7 +253,8 @@ func (tc *TestCluster) Strings() (ss []string) {
 	ss = append(ss, "    Name: "+tc.Name)
 	ss = append(ss, "    ID: "+hex.EncodeToString(tc.ID))
 	ss = append(ss, fmt.Sprintf("    EPCount: %d", tc.EPCount))
-	ss = append(ss, fmt.Sprintf("    Size: %d", tc.Size))
+	ss = append(ss, fmt.Sprintf("    curSize: %d", tc.curSize))
+	ss = append(ss, fmt.Sprintf("    maxSize: %d", tc.maxSize))
 
 	ss = append(ss, "    Members {")
 	for i := 0; i < len(tc.ClMembers); i++ {
@@ -266,21 +269,23 @@ func (tc *TestCluster) Strings() (ss []string) {
 	return
 }
 
-func (tc *TestCluster) String() string {
+func (tc *Cluster) String() string {
 	return strings.Join(tc.Strings(), "\n")
 }
-func ParseTestCluster(s string) (tc *TestCluster, rest []string, err error) {
+func ParseCluster(s string) (tc *Cluster, rest []string, err error) {
 	ss := strings.Split(s, "\n")
-	return ParseTestClusterFromStrings(ss)
+	return ParseClusterFromStrings(ss)
 }
-func ParseTestClusterFromStrings(ss []string) (
-	tc *TestCluster, rest []string, err error) {
+func ParseClusterFromStrings(ss []string) (
+	tc *Cluster, rest []string, err error) {
 
 	var (
-		attrs         uint64
-		name          string
-		id            *xi.NodeID
-		EPCount, Size uint32
+		attrs   uint64
+		name    string
+		id      *xi.NodeID
+		EPCount uint32
+		curSize uint32
+		maxSize uint32
 	)
 	rest = ss
 
@@ -339,11 +344,11 @@ func ParseTestClusterFromStrings(ss []string) (
 	}
 	if err == nil {
 		line = xn.NextNBLine(&rest)
-		if strings.HasPrefix(line, "Size: ") {
+		if strings.HasPrefix(line, "curSize: ") {
 			var size int
 			size, err = strconv.Atoi(line[9:])
 			if err == nil {
-				Size = uint32(size)
+				curSize = uint32(size)
 			}
 		} else {
 			fmt.Println("BAD MAX_SIZE")
@@ -351,9 +356,23 @@ func ParseTestClusterFromStrings(ss []string) (
 		}
 	}
 	if err == nil {
-		tc, err = NewTestCluster(name, id, attrs, Size, EPCount)
+		line = xn.NextNBLine(&rest)
+		if strings.HasPrefix(line, "maxSize: ") {
+			var size int
+			size, err = strconv.Atoi(line[9:])
+			if err == nil {
+				maxSize = uint32(size)
+			}
+		} else {
+			fmt.Println("BAD MAX_SIZE")
+			err = IllFormedCluster
+		}
 	}
 	if err == nil {
+		tc, err = NewCluster(name, id, attrs, maxSize, EPCount)
+	}
+	if err == nil {
+		tc.curSize = curSize
 		line = xn.NextNBLine(&rest)
 		if line == "Members {" {
 			for {
