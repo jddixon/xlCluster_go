@@ -14,11 +14,11 @@ var (
 )
 
 type ClusterMember struct {
-	Attrs        uint64 // negotiated with/decreed by reg server
-	ClusterName  string
-	ClusterID    *xi.NodeID
-	ClusterAttrs uint64
-	ClusterSize  uint32 // this is a FIXED size, aka MaxSize, including self
+	Attrs          uint64 // negotiated with/decreed by reg server
+	ClusterName    string
+	ClusterID      *xi.NodeID
+	ClusterAttrs   uint64
+	ClusterMaxSize uint32 // this is a FIXED size, aka MaxSize, including self
 
 	// EPCount is the number of endPoints dedicated to use for cluster-
 	// related purposes.  By convention endPoints[0] is used for
@@ -41,7 +41,7 @@ func (cm *ClusterMember) AddPeers() (err error) {
 	if node == nil {
 		err = NilNode
 	} else {
-		for i := uint32(0); i < cm.ClusterSize; i++ {
+		for i := uint32(0); i < cm.ClusterMaxSize; i++ {
 			if i == cm.SelfIndex {
 				continue
 			}
@@ -74,7 +74,7 @@ func (cm *ClusterMember) Equal(any interface{}) bool {
 
 	if cm.Attrs != other.Attrs || cm.ClusterName != other.ClusterName ||
 		cm.ClusterAttrs != other.ClusterAttrs ||
-		cm.ClusterSize != other.ClusterSize || cm.EPCount != other.EPCount {
+		cm.ClusterMaxSize != other.ClusterMaxSize || cm.EPCount != other.EPCount {
 		return false
 	}
 	if !cm.ClusterID.Equal(other.ClusterID) {
@@ -102,7 +102,7 @@ func (cm *ClusterMember) Strings() (ss []string) {
 	ss = append(ss, fmt.Sprintf("%sclusterID: %s", INDENT,
 		hex.EncodeToString(cm.ClusterID.Value())))
 	ss = append(ss, fmt.Sprintf("%sclusterAttrs: %d", INDENT, cm.ClusterAttrs))
-	ss = append(ss, fmt.Sprintf("%sclusterSize: %d", INDENT, cm.ClusterSize))
+	ss = append(ss, fmt.Sprintf("%sclusterMaxSize: %d", INDENT, cm.ClusterMaxSize))
 	ss = append(ss, fmt.Sprintf("%sepCount: %d", INDENT, cm.EPCount))
 
 	ss = append(ss, fmt.Sprintf("%sselfIndex: %d", INDENT, cm.SelfIndex))
@@ -135,15 +135,15 @@ func ParseClusterMemberFromStrings(ss []string) (
 	cm *ClusterMember, rest []string, err error) {
 
 	var (
-		node         *xn.Node
-		attrs        uint64
-		clusterName  string
-		clusterAttrs uint64
-		clusterID    *xi.NodeID
-		clusterSize  uint32
-		selfIndex    uint32
-		memberInfos  []*MemberInfo
-		epCount      uint32
+		node           *xn.Node
+		attrs          uint64
+		clusterName    string
+		clusterAttrs   uint64
+		clusterID      *xi.NodeID
+		clusterMaxSize uint32
+		selfIndex      uint32
+		memberInfos    []*MemberInfo
+		epCount        uint32
 	)
 	line := xn.NextNBLine(&ss)
 	if line != "clusterMember {" {
@@ -205,12 +205,12 @@ func ParseClusterMemberFromStrings(ss []string) (
 	if err == nil {
 		line = xn.NextNBLine(&rest)
 		parts := strings.Split(line, ": ")
-		if len(parts) == 2 && parts[0] == "clusterSize" {
+		if len(parts) == 2 && parts[0] == "clusterMaxSize" {
 			var n int
 			raw := strings.TrimSpace(parts[1])
 			n, err = strconv.Atoi(raw)
 			if err == nil {
-				clusterSize = uint32(n)
+				clusterMaxSize = uint32(n)
 			}
 		} else {
 			err = IllFormedClusterMember
@@ -276,15 +276,15 @@ func ParseClusterMemberFromStrings(ss []string) (
 	}
 	if err == nil {
 		cm = &ClusterMember{
-			Attrs:        attrs,
-			ClusterName:  clusterName,
-			ClusterAttrs: clusterAttrs,
-			ClusterID:    clusterID,
-			ClusterSize:  clusterSize,
-			SelfIndex:    selfIndex,
-			Members:      memberInfos,
-			EPCount:      epCount,
-			Node:         *node,
+			Attrs:          attrs,
+			ClusterName:    clusterName,
+			ClusterAttrs:   clusterAttrs,
+			ClusterID:      clusterID,
+			ClusterMaxSize: clusterMaxSize,
+			SelfIndex:      selfIndex,
+			Members:        memberInfos,
+			EPCount:        epCount,
+			Node:           *node,
 		}
 	}
 	return

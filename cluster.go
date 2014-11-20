@@ -96,13 +96,13 @@ func (tc *Cluster) AddToCluster(node *xn.Node, attrs uint64) (
 	nodeID, err := xi.New(tc.ID)
 	if err == nil {
 		member = &ClusterMember{
-			Attrs:        attrs,
-			ClusterName:  tc.Name,
-			ClusterID:    nodeID,
-			ClusterAttrs: tc.Attrs,
-			ClusterSize:  tc.maxSize,
-			EPCount:      tc.EPCount, // need to check
-			SelfIndex:    uint32(len(tc.ClMembers)),
+			Attrs:          attrs,
+			ClusterName:    tc.Name,
+			ClusterID:      nodeID,
+			ClusterAttrs:   tc.Attrs,
+			ClusterMaxSize: tc.maxSize,
+			EPCount:        tc.EPCount, // need to check
+			SelfIndex:      uint32(len(tc.ClMembers)),
 			// ClMembers not set
 			Node: *node,
 		}
