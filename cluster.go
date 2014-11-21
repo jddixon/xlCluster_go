@@ -159,20 +159,30 @@ func (tc *Cluster) AddMember(member *ClusterMember) (err error) {
 	return
 }
 
-func (tc *Cluster) CloseAcceptors() {
+/**
+ * XXX Locking occurs at a lower level, making deadlocks possible.
+ */
+func (tc *Cluster) Run() (err error) {
 	members := tc.ClMembers //  []*ClusterMember)
 	if members != nil {
-		for i := 0; i < len(members); i++ {
-			node := members[i].Node
-			count := node.SizeAcceptors()
-			for j := 0; j < count; j++ {
-				acc := node.GetAcceptor(j)
-				if acc != nil {
-					acc.Close()
-				}
-			}
+		for i := 0; err == nil && i < len(members); i++ {
+			err = members[i].Node.Run()
 		}
 	}
+	return
+}
+
+/**
+ * XXX Locking occurs at a lower level, making deadlocks possible.
+ */
+func (tc *Cluster) Close() (err error) {
+	members := tc.ClMembers //  []*ClusterMember)
+	if members != nil {
+		for i := 0; err == nil && i < len(members); i++ {
+			err = members[i].Node.Close()
+		}
+	}
+	return
 }
 
 // EQUAL ////////////////////////////////////////////////////////////

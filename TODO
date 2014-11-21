@@ -1,5 +1,12 @@
 xlCluster_go/TODO
 
+2014-11-21
+    * need LocalHostCluster serialization routines                      
+
+2014-11-21 (-20, edited)
+    * restructure in such a way that
+        - a LocalHostCluster has Run() and Close() functions            * DONE
+
 2014-11-19
     * FIX: Cluster.Strings() loops len(tc.clMembers) times, but 
         doesn't verify that this is the same as curSize
@@ -12,5 +19,5 @@ xlCluster_go/TODO
     * need testCluster_test.go                                          * No...
     * need cluster.go for Cluster                                       * DONE
         - and cluster_test.go 
-        - possibly LocalHostCluster
+        - possibly LocalHostCluster                                     * DONE
         - possibly VMCluster

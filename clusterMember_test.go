@@ -24,11 +24,11 @@ func (s *XLSuite) makeTestCluster(c *C, rng *xr.PRNG, name string,
 		ckPrivs, skPrivs []*rsa.PrivateKey
 	)
 
-	tc, err := NewCluster(name, nodeID, attrs, size, epCount)
+	tc, err := NewLocalHostCluster(name, nodeID, attrs, size, epCount)
 	c.Assert(err, IsNil)
 	c.Assert(tc, NotNil)
 	// defer closing each member's acceptors, unless nil
-	defer tc.CloseAcceptors()
+	defer tc.Close() // ignoring any error
 
 	// populate the test cluster ////////////////////////////////////
 
@@ -40,7 +40,7 @@ func (s *XLSuite) makeTestCluster(c *C, rng *xr.PRNG, name string,
 		ckPrivs = append(ckPrivs, ckPriv)
 		skPrivs = append(skPrivs, skPriv)
 
-		// add epCount endPoints to the node, creating acceptors
+		// add epCount endPoints to the node
 		for j := uint32(0); j < epCount; j++ {
 			var (
 				ep  *xt.TcpEndPoint
@@ -51,12 +51,10 @@ func (s *XLSuite) makeTestCluster(c *C, rng *xr.PRNG, name string,
 			ndx, err = node.AddEndPoint(ep)
 			c.Assert(err, IsNil)
 			c.Assert(ndx, Equals, int(j))
-			// DEBUG ------------------------------------------------
-			acc := node.GetAcceptor(int(j))
-			fmt.Printf("node %d, acceptor %d: %s\n", i, j, acc.String())
-			// END --------------------------------------------------
 		}
 		c.Assert(node.SizeEndPoints(), Equals, int(epCount))
+		err = node.Run()
+		c.Assert(err, IsNil)
 
 		attrs := uint64(rng.Int63())
 		var member *ClusterMember
@@ -66,6 +64,19 @@ func (s *XLSuite) makeTestCluster(c *C, rng *xr.PRNG, name string,
 		c.Assert(member.SelfIndex, Equals, i)
 		members = append(members, member)
 	}
+	err = tc.Run()
+	c.Assert(err, IsNil)
+
+	// DEBUG --------------------------------------------------------
+	for i := uint32(0); i < size; i++ {
+		node := members[i].Node
+		for j := uint32(0); j < epCount; j++ {
+			acc := node.GetAcceptor(int(j))
+			fmt.Printf("node %d, acceptor %d: %s\n", i, j, acc.String())
+		}
+	}
+	// END ----------------------------------------------------------
+
 	// add MemberInfo to each cluster member //////////////
 	var memberInfos []*MemberInfo
 	for i := uint32(0); i < size; i++ {
@@ -142,6 +153,9 @@ func (s *XLSuite) TestClusterMemberSerialization(c *C) {
 	if VERBOSITY > 0 {
 		fmt.Println("\nTEST_CLUSTER_MEMBER_SERIALIZATION")
 	}
+	var (
+		err error
+	)
 	rng := xr.MakeSimpleRNG()
 
 	// Generate a random test cluster
@@ -164,7 +178,9 @@ func (s *XLSuite) TestClusterMemberSerialization(c *C) {
 	serialized := cm.String()
 
 	// close all acceptors (otherwise we get 'port in use' error)
-	tc.CloseAcceptors()
+	err = tc.Close()
+	c.Assert(err, IsNil)
+
 	// allow time for things to settle; this might very rarely cause
 	// us to lose a port
 	time.Sleep(50 * time.Millisecond)
