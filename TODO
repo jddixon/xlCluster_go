@@ -1,5 +1,10 @@
 xlCluster_go/TODO
 
+2014-11-24
+    * LocalHostCluster Run/Close become Start/Stop                      * DONE
+    * drop Cluster Run/Close                                            * DONE
+        - could become interface
+
 2014-11-21
     * need LocalHostCluster serialization routines                      
 

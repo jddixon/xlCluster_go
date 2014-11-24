@@ -159,31 +159,31 @@ func (tc *Cluster) AddMember(member *ClusterMember) (err error) {
 	return
 }
 
-/**
- * XXX Locking occurs at a lower level, making deadlocks possible.
- */
-func (tc *Cluster) Run() (err error) {
-	members := tc.ClMembers //  []*ClusterMember)
-	if members != nil {
-		for i := 0; err == nil && i < len(members); i++ {
-			err = members[i].Node.Run()
-		}
-	}
-	return
-}
-
-/**
- * XXX Locking occurs at a lower level, making deadlocks possible.
- */
-func (tc *Cluster) Close() (err error) {
-	members := tc.ClMembers //  []*ClusterMember)
-	if members != nil {
-		for i := 0; err == nil && i < len(members); i++ {
-			err = members[i].Node.Close()
-		}
-	}
-	return
-}
+///**
+// * XXX Locking occurs at a lower level, making deadlocks possible.
+// */
+//func (tc *Cluster) Start() (err error) {
+//	members := tc.ClMembers //  []*ClusterMember)
+//	if members != nil {
+//		for i := 0; err == nil && i < len(members); i++ {
+//			err = members[i].Node.Run()
+//		}
+//	}
+//	return
+//}
+//
+///**
+// * XXX Locking occurs at a lower level, making deadlocks possible.
+// */
+//func (tc *Cluster) Stop() (err error) {
+//	members := tc.ClMembers //  []*ClusterMember)
+//	if members != nil {
+//		for i := 0; err == nil && i < len(members); i++ {
+//			err = members[i].Node.Close()
+//		}
+//	}
+//	return
+//}
 
 // EQUAL ////////////////////////////////////////////////////////////
 func (tc *Cluster) Equal(any interface{}) bool {

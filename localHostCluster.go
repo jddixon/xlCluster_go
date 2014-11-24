@@ -11,15 +11,21 @@ type LocalHostCluster struct {
 }
 
 func NewLocalHostCluster(name string, id *xi.NodeID, attrs uint64,
-	maxSize, epCount uint32) (tc *Cluster, err error) {
+	maxSize, epCount uint32) (tc *LocalHostCluster, err error) {
 
-	return NewCluster(name, id, attrs, maxSize, epCount)
+	cl, err := NewCluster(name, id, attrs, maxSize, epCount)
+	if err == nil {
+		tc = &LocalHostCluster{
+			Cluster: *cl,
+		}
+	}
+	return
 }
 
 /**
  * Call Run() on all constituent Nodes, which will activate acceptors.
  */
-func (lhc *LocalHostCluster) Run() (err error) {
+func (lhc *LocalHostCluster) Start() (err error) {
 	for i := 0; err == nil && i < len(lhc.ClMembers); i++ {
 		err = lhc.ClMembers[i].Run()
 	}
@@ -29,7 +35,7 @@ func (lhc *LocalHostCluster) Run() (err error) {
 /**
  * Call Close() on all constituent Nodes, which will close acceptors.
  */
-func (lhc *LocalHostCluster) Close() (err error) {
+func (lhc *LocalHostCluster) Stop() (err error) {
 
 	for i := 0; err == nil && i < len(lhc.ClMembers); i++ {
 		err = lhc.ClMembers[i].Close()

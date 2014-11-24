@@ -3,8 +3,12 @@ xlCluster_go/CHANGES
 The version number and date in this file must be kept in sync with version.go
 -----------------------------------------------------------------------------
 
+v1.8.0
+    2014-11-24
+        * LocalHostCluster.Run/Close() become Start/Stop()
+        * fixed various bugs                                        SLOC 1046
 v1.7.1
-    2014-22-22
+    2014-11-22
         * add LocalHostCluster                                      SLOC 1057
 v1.7.0
     2014-11-17

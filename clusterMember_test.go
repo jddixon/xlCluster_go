@@ -17,7 +17,8 @@ import (
 // Create a test cluster using NewCluster() without using the
 // xlReg registry.
 func (s *XLSuite) makeTestCluster(c *C, rng *xr.PRNG, name string,
-	nodeID *xi.NodeID, attrs uint64, size, epCount uint32) (tc *Cluster) {
+	nodeID *xi.NodeID, attrs uint64, size, epCount uint32) (
+	tc *LocalHostCluster) {
 
 	var (
 		members          []*ClusterMember
@@ -28,7 +29,7 @@ func (s *XLSuite) makeTestCluster(c *C, rng *xr.PRNG, name string,
 	c.Assert(err, IsNil)
 	c.Assert(tc, NotNil)
 	// defer closing each member's acceptors, unless nil
-	defer tc.Close() // ignoring any error
+	defer tc.Stop() // ignoring any error
 
 	// populate the test cluster ////////////////////////////////////
 
@@ -64,7 +65,7 @@ func (s *XLSuite) makeTestCluster(c *C, rng *xr.PRNG, name string,
 		c.Assert(member.SelfIndex, Equals, i)
 		members = append(members, member)
 	}
-	err = tc.Run()
+	err = tc.Start()
 	c.Assert(err, IsNil)
 
 	// DEBUG --------------------------------------------------------
@@ -178,7 +179,7 @@ func (s *XLSuite) TestClusterMemberSerialization(c *C) {
 	serialized := cm.String()
 
 	// close all acceptors (otherwise we get 'port in use' error)
-	err = tc.Close()
+	err = tc.Stop()
 	c.Assert(err, IsNil)
 
 	// allow time for things to settle; this might very rarely cause
