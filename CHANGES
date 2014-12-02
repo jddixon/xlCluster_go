@@ -4,6 +4,8 @@ The version number and date in this file must be kept in sync with version.go
 -----------------------------------------------------------------------------
 
 v1.8.1
+    2014-12-02
+        * change Node.Run()/Close() to OpenAcc()/CloseAcc()         SLOC 2196
     2014-11-26
         * added pktComms/ from paxos_go                             SLOC 2196
 v1.8.0

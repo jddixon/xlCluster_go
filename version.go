@@ -10,5 +10,5 @@ package cluster
 // into a uint32 in in_handler.go init()
 const (
 	VERSION      = "1.8.1"
-	VERSION_DATE = "2014-11-26"
+	VERSION_DATE = "2014-12-02"
 )

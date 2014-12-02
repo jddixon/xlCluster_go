@@ -54,7 +54,7 @@ func (s *XLSuite) makeTestCluster(c *C, rng *xr.PRNG, name string,
 			c.Assert(ndx, Equals, int(j))
 		}
 		c.Assert(node.SizeEndPoints(), Equals, int(epCount))
-		err = node.Run()
+		err = node.OpenAcc()
 		c.Assert(err, IsNil)
 
 		attrs := uint64(rng.Int63())
