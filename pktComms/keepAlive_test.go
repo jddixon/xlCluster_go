@@ -17,7 +17,7 @@ func (s *XLSuite) TestKeepAlives(c *C) {
 
 	// 1. Launch an ephemeral xlReg server --------------------------
 	eph, reg, regID, server := s.launchEphServer(c)
-	defer eph.Close()
+	defer eph.Stop()
 
 	// 2. Create a random cluster name and size ---------------------
 	clusterName, clusterAttrs, clusterID, K := s.createAndRegSoloCluster(c, rng,

@@ -56,7 +56,7 @@ func NewPktLayer(cm *xcl.ClusterMember) (pl *PktLayer, err error) {
 func (pl *PktLayer) Start() {
 
 	cl := &pl.ClusterMember
-	err := cl.Run()
+	err := cl.OpenAcc() // runs the Node
 
 	if err == nil {
 		go func() {

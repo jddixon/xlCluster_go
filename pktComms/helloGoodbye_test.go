@@ -19,7 +19,7 @@ func (s *XLSuite) TestHelloGoodbye(c *C) {
 
 	// 1. Launch an ephemeral xlReg server --------------------------
 	eph, reg, regID, server := s.launchEphServer(c)
-	defer eph.Close()
+	defer eph.Stop()
 
 	// 2. Create a random cluster name and size; register it --------
 	fmt.Printf("TestHelloGoodbye 2\n")

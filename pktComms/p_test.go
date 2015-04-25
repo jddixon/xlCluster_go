@@ -8,7 +8,7 @@ import (
 	"encoding/binary"
 	"fmt"
 	xr "github.com/jddixon/rnglib_go"
-	xc "github.com/jddixon/xlCrypto_go"
+	xu "github.com/jddixon/xlUtil_go"
 	. "gopkg.in/check.v1"
 )
 
@@ -27,7 +27,7 @@ func (d *XLSuite) TestPaxosPkt(c *C) {
 		mySeqN = uint64(rng.Int63())
 	}
 
-	id := rng.SomeBytes(xc.SHA1_LEN)
+	id := rng.SomeBytes(xu.SHA1_BIN_LEN)
 
 	seqBuf := new(bytes.Buffer)
 	binary.Write(seqBuf, binary.LittleEndian, mySeqN)
