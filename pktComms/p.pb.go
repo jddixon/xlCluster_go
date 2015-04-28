@@ -18,7 +18,7 @@ It has these top-level messages:
 */
 package pktComms
 
-import proto "code.google.com/p/goprotobuf/proto"
+import proto "github.com/golang/protobuf/proto"
 import math "math"
 
 // Reference imports to suppress errors if they are not otherwise used.
@@ -83,9 +83,11 @@ func (m *AppMsg) GetDigSig() []byte {
 }
 
 // First message sent; initiates a communications cycle.  The first MsgN
-// must be 1.  ID is the nodeID of the sender, a 32-byte value.  sigPubKey
-// is the sender's RSA sig public key; commsPubKey is the sender's RSA
-// comms public key.
+// must be 1.  ID is the nodeID of the sender, a 20- (SHA1) or 32-byte
+// (SHA256 or SHA3) value.  sigPubKey is the sender's RSA sig public key;
+// commsPubKey is the sender's RSA comms public key.  The TCP address
+// is conventionally a dotted quad followed by a port number (A.B.C.D:P).
+//
 type Hello struct {
 	MsgN             *uint64 `protobuf:"varint,2,opt" json:"MsgN,omitempty"`
 	ID               []byte  `protobuf:"bytes,3,opt" json:"ID,omitempty"`

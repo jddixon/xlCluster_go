@@ -1,3 +1,5 @@
+syntax = "proto2";
+
 package pktComms;
 
 // Where a DigSig field is present, it must be SHA1 (20 bytes, 160 bits) and 
@@ -16,9 +18,11 @@ message AppMsg {
 }
 
 // First message sent; initiates a communications cycle.  The first MsgN
-// must be 1.  ID is the nodeID of the sender, a 32-byte value.  sigPubKey
-// is the sender's RSA sig public key; commsPubKey is the sender's RSA
-// comms public key.
+// must be 1.  ID is the nodeID of the sender, a 20- (SHA1) or 32-byte 
+// (SHA256 or SHA3) value.  sigPubKey is the sender's RSA sig public key; 
+// commsPubKey is the sender's RSA comms public key.  The TCP address 
+// is conventionally a dotted quad followed by a port number (A.B.C.D:P).
+//
 message Hello {
     optional uint64 MsgN		= 2;
     optional bytes  ID			= 3;

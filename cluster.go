@@ -1,6 +1,6 @@
 package cluster
 
-// xlReg_go/testCluster.go
+// xlCluster_go/testCluster.go
 
 // This file contains functions and structures used to create
 // and manage and manage clusters of ClusterMembers.

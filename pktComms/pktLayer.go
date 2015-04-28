@@ -5,10 +5,6 @@ package pktComms
 import (
 	"fmt"
 	xcl "github.com/jddixon/xlCluster_go"
-	//xi "github.com/jddixon/xlNodeID_go"
-	//xn "github.com/jddixon/xlNode_go"
-	xg "github.com/jddixon/xlReg_go"
-	//xt "github.com/jddixon/xlTransport_go"
 	"sync"
 )
 
@@ -32,7 +28,7 @@ func NewPktLayer(cm *xcl.ClusterMember) (pl *PktLayer, err error) {
 	} else {
 		lfs := cm.GetLFS()
 		if lfs == "" {
-			cm.Attrs |= xg.ATTR_EPHEMERAL
+			cm.Attrs |= xcl.ATTR_EPHEMERAL
 		}
 		pcn := &PktCommsNode{
 			ClusterMember: *cm,

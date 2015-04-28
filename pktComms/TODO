@@ -1,5 +1,18 @@
 xlCluster_go/pktComms/TODO 
 
+2015-04-28
+    * helloGoodbyte_test.go needs to be completed !
+        - replace xlReg ephemeral server with simple server running
+            the local protocol
+    * inQ_test.go needs to be completed
+    * keepAlive_test.go needs to be written -- it's currently just a
+        stub -- but without any dependency on xlReg
+    * revise misc_test.go to remove dependency on xlReg or just
+        drop the test entirely
+        - replace xlReg ephemeral server as described above
+
+    * revise pktLayer.go to remove dependency on xlReg (uses constant)
+
 -------------------
 FROM paxos_go/TODO:
 -------------------

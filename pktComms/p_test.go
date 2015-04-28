@@ -2,7 +2,6 @@ package pktComms
 
 import (
 	"bytes"
-	//"code.google.com/p/go.crypto/sha3"
 	"code.google.com/p/goprotobuf/proto"
 	"crypto/sha1"
 	"encoding/binary"

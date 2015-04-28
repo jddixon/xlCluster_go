@@ -1,6 +1,6 @@
 package cluster
 
-// xlReg_go/member_info_test.go
+// xlCluster_go/member_info_test.go
 
 import (
 	"fmt"

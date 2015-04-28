@@ -5,7 +5,6 @@ package pktComms
 import (
 	"fmt"
 	xr "github.com/jddixon/rnglib_go"
-	//xg "github.com/jddixon/xlReg_go"
 	. "gopkg.in/check.v1"
 )
 

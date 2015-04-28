@@ -9,11 +9,7 @@ import (
 	//"crypto/rsa"
 	"encoding/hex"
 	"fmt"
-	// xc "github.com/jddixon/xlCrypto_go"
-	//xi "github.com/jddixon/xlNodeID_go"
 	xn "github.com/jddixon/xlNode_go"
-	//xg "github.com/jddixon/xlReg_go"
-	//xt "github.com/jddixon/xlTransport_go"
 	"strings"
 )
 

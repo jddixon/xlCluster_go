@@ -1,5 +1,10 @@
 xlCluster_go/TODO
 
+2015-04-25
+    * review xlReg_go/bootstrap.go to determine whather any of its
+        functionality belongs in this package
+    * remove all dependencies on xlReg to avoid possible circular       * NONE
+        imports                                                         * NONE
 2014-11-24
     * LocalHostCluster Run/Close become Start/Stop                      * DONE
     * drop Cluster Run/Close                                            * DONE

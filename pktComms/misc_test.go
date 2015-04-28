@@ -122,8 +122,6 @@ func (s *XLSuite) createAndRegSoloCluster(c *C, rng *xr.PRNG,
 // Create PktComm layers for K members
 //
 ///////////////////////////////////////////////////////////////////////
-// XXX epCount IS SET TO 3, WHICH IS WRONG IN GENERAL.
-//
 // XXX THIS IS NOW CREATING Bootstrappers !!
 ///////////////////////////////////////////////////////////////////////
 func (s *XLSuite) createKMemberPktLayers(c *C, rng *xr.PRNG,
@@ -163,7 +161,7 @@ func (s *XLSuite) createKMemberPktLayers(c *C, rng *xr.PRNG,
 			attrs,
 			serverName, serverID, serverEnd, serverCK, serverSK,
 			clusterName, clusterAttrs, clusterID,
-			K, uint32(3), e) //3 is endPoint count
+			K, uint32(2), e) // 2 is endPoint count
 		c.Assert(err, IsNil)
 		c.Assert(bs[i], NotNil)
 		c.Assert(bs[i].ClusterID, NotNil)
