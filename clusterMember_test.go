@@ -133,7 +133,7 @@ func (s *XLSuite) makeTestCluster(c *C, rng *xr.PRNG, name string,
 		name := members[i].GetName()
 		nodeID := members[i].GetNodeID()
 
-		memberByName := tc.ClMembersByName[name]
+		memberByName := tc.clMembersByName[name]
 		c.Assert(members[i].Equal(memberByName), Equals, true)
 
 		var bKey xh.BytesKey
@@ -141,7 +141,7 @@ func (s *XLSuite) makeTestCluster(c *C, rng *xr.PRNG, name string,
 		c.Assert(err, IsNil)
 		c.Assert(bKey, NotNil)
 
-		byID, err := tc.ClMembersByID.Find(bKey)
+		byID, err := tc.clMembersByID.Find(bKey)
 		c.Assert(err, IsNil)
 		c.Assert(byID, NotNil)
 		memberByID, ok := byID.(*ClusterMember)
@@ -170,7 +170,7 @@ func (s *XLSuite) TestClusterMemberSerialization(c *C) {
 
 	// select a member randomly
 	cmNdx := rng.Intn(int(size))
-	cm := tc.ClMembers[cmNdx]
+	cm := tc.clMembers[cmNdx]
 
 	// simplest test of Equal()
 	c.Assert(cm.Equal(cm), Equals, true)

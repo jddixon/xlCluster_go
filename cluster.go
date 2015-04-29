@@ -12,7 +12,6 @@ import (
 	ha "github.com/jddixon/hamt_go"
 	xi "github.com/jddixon/xlNodeID_go"
 	xn "github.com/jddixon/xlNode_go"
-	//xo "github.com/jddixon/xlOverlay_go"
 	xm "github.com/jddixon/xlUtil_go/math"
 	"strconv"
 	"strings"
@@ -22,16 +21,16 @@ import (
 var _ = fmt.Print
 
 type Cluster struct {
-	Name            string // must be unique within the registry
-	ID              []byte // must be globally unique
-	Attrs           uint64 // a field of bit flags
+	name            string // must be unique within the registry
+	id              []byte // must be globally unique
+	attrs           uint64 // a field of bit flags
 	curSize         uint32 // current size, may not exceed maxSize
 	maxSize         uint32 // a maximum; must be > 0
-	EPCount         uint32 // a positive integer, for now usually 1 or 2
-	ClMembers       []*ClusterMember
-	ClMembersByName map[string]*ClusterMember
-	ClMembersByID   ha.HAMT
-	Mu              sync.RWMutex
+	epCount         uint32 // a positive integer, for now usually 1 or 2
+	clMembers       []*ClusterMember
+	clMembersByName map[string]*ClusterMember
+	clMembersByID   ha.HAMT
+	mu              sync.RWMutex
 }
 
 func NewCluster(name string, id *xi.NodeID, attrs uint64,
@@ -54,13 +53,13 @@ func NewCluster(name string, id *xi.NodeID, attrs uint64,
 	}
 	if err == nil {
 		tc = &Cluster{
-			Attrs:           attrs,
-			Name:            name,
-			ID:              id.Value(),
-			EPCount:         epCount,
+			attrs:           attrs,
+			name:            name,
+			id:              id.Value(),
+			epCount:         epCount,
 			maxSize:         maxSize,
-			ClMembersByName: nameMap,
-			ClMembersByID:   m,
+			clMembersByName: nameMap,
+			clMembersByID:   m,
 		}
 	}
 	return
@@ -68,19 +67,29 @@ func NewCluster(name string, id *xi.NodeID, attrs uint64,
 
 // ATTRIBUTES ///////////////////////////////////////////////
 
+func (tc *Cluster) GetAttrs() uint64 {
+	return tc.attrs
+}
 func (tc *Cluster) GetName() string {
-	return tc.Name
+	return tc.name
 }
 func (tc *Cluster) GetNodeID() (id *xi.NodeID) {
-	id, _ = xi.New(tc.ID)
+	id, _ = xi.New(tc.id)
 	return
 }
 
+func (tc *Cluster) GetEPCount() uint32 {
+	var epCount uint32
+	tc.mu.RLock() // <-------------------------------------
+	epCount = tc.epCount
+	tc.mu.RUnlock() // <-----------------------------------
+	return epCount
+}
 func (tc *Cluster) GetCurSize() uint32 {
 	var curSize uint32
-	tc.Mu.RLock() // <-------------------------------------
-	curSize = uint32(len(tc.ClMembers))
-	tc.Mu.RUnlock() // <-----------------------------------
+	tc.mu.RLock() // <-------------------------------------
+	curSize = uint32(len(tc.clMembers))
+	tc.mu.RUnlock() // <-----------------------------------
 	return curSize
 }
 func (tc *Cluster) GetMaxSize() uint32 {
@@ -93,16 +102,16 @@ func (tc *Cluster) GetMaxSize() uint32 {
 func (tc *Cluster) AddToCluster(node *xn.Node, attrs uint64) (
 	member *ClusterMember, err error) {
 
-	nodeID, err := xi.New(tc.ID)
+	nodeID, err := xi.New(tc.id)
 	if err == nil {
 		member = &ClusterMember{
 			Attrs:          attrs,
-			ClusterName:    tc.Name,
+			ClusterName:    tc.name,
 			ClusterID:      nodeID,
-			ClusterAttrs:   tc.Attrs,
+			ClusterAttrs:   tc.attrs,
 			ClusterMaxSize: tc.maxSize,
-			EPCount:        tc.EPCount, // need to check
-			SelfIndex:      uint32(len(tc.ClMembers)),
+			EPCount:        tc.epCount, // need to check
+			SelfIndex:      uint32(len(tc.clMembers)),
 			// ClMembers not set
 			Node: *node,
 		}
@@ -118,9 +127,9 @@ func (tc *Cluster) AddMember(member *ClusterMember) (err error) {
 	// verify no existing member has the same name
 	name := member.GetName()
 
-	tc.Mu.RLock() // <------------------------------------
-	_, ok := tc.ClMembersByName[name]
-	tc.Mu.RUnlock() // <------------------------------------
+	tc.mu.RLock() // <------------------------------------
+	_, ok := tc.clMembersByName[name]
+	tc.mu.RUnlock() // <------------------------------------
 
 	if ok {
 		// DEBUG
@@ -134,26 +143,26 @@ func (tc *Cluster) AddMember(member *ClusterMember) (err error) {
 			bKey  ha.BytesKey
 		)
 		// check for entry in HAMT
-		tc.Mu.RLock() // <---------------------------------
-		bKey, err = ha.NewBytesKey(tc.ID)
-		entry, err = tc.ClMembersByID.Find(bKey)
-		tc.Mu.RUnlock() // <-------------------------------
+		tc.mu.RLock() // <---------------------------------
+		bKey, err = ha.NewBytesKey(tc.id)
+		entry, err = tc.clMembersByID.Find(bKey)
+		tc.mu.RUnlock() // <-------------------------------
 		if err == nil {
 			if entry != nil {
 				err = ClusterMemberIDInUse
 			}
 		}
 		if err == nil {
-			tc.Mu.Lock()               // <------------------
-			index := len(tc.ClMembers) // DEBUG
+			tc.mu.Lock()               // <------------------
+			index := len(tc.clMembers) // DEBUG
 			_ = index                  // we might want to use this
-			tc.ClMembers = append(tc.ClMembers, member)
-			tc.ClMembersByName[name] = member
+			tc.clMembers = append(tc.clMembers, member)
+			tc.clMembersByName[name] = member
 			bKey, err = ha.NewBytesKey(member.GetNodeID().Value())
 			if err == nil {
-				err = tc.ClMembersByID.Insert(bKey, member)
+				err = tc.clMembersByID.Insert(bKey, member)
 			}
-			tc.Mu.Unlock() // <----------------------------
+			tc.mu.Unlock() // <----------------------------
 		}
 	}
 	return
@@ -163,7 +172,7 @@ func (tc *Cluster) AddMember(member *ClusterMember) (err error) {
 // * XXX Locking occurs at a lower level, making deadlocks possible.
 // */
 //func (tc *Cluster) Start() (err error) {
-//	members := tc.ClMembers //  []*ClusterMember)
+//	members := tc.clMembers //  []*ClusterMember)
 //	if members != nil {
 //		for i := 0; err == nil && i < len(members); i++ {
 //			err = members[i].Node.Run()
@@ -176,7 +185,7 @@ func (tc *Cluster) AddMember(member *ClusterMember) (err error) {
 // * XXX Locking occurs at a lower level, making deadlocks possible.
 // */
 //func (tc *Cluster) Stop() (err error) {
-//	members := tc.ClMembers //  []*ClusterMember)
+//	members := tc.clMembers //  []*ClusterMember)
 //	if members != nil {
 //		for i := 0; err == nil && i < len(members); i++ {
 //			err = members[i].Node.Close()
@@ -201,30 +210,30 @@ func (tc *Cluster) Equal(any interface{}) bool {
 		return false
 	}
 	other := any.(*Cluster) // type assertion
-	if tc.Attrs != other.Attrs {
+	if tc.attrs != other.attrs {
 		// DEBUG
-		fmt.Printf("tc.Equal: ATTRS DIFFER %s vs %s\n", tc.Attrs, other.Attrs)
+		fmt.Printf("tc.Equal: ATTRS DIFFER %s vs %s\n", tc.attrs, other.attrs)
 		// END
 		return false
 	}
-	if tc.Name != other.Name {
+	if tc.name != other.name {
 		// DEBUG
-		fmt.Printf("tc.Equal: NAMES DIFFER %s vs %s\n", tc.Name, other.Name)
+		fmt.Printf("tc.Equal: NAMES DIFFER %s vs %s\n", tc.name, other.name)
 		// END
 		return false
 	}
-	if !bytes.Equal(tc.ID, other.ID) {
+	if !bytes.Equal(tc.id, other.id) {
 		// DEBUG
-		tcHexID := hex.EncodeToString(tc.ID)
-		otherHexID := hex.EncodeToString(other.ID)
+		tcHexID := hex.EncodeToString(tc.id)
+		otherHexID := hex.EncodeToString(other.id)
 		fmt.Printf("tc.Equal: IDs DIFFER %s vs %s\n", tcHexID, otherHexID)
 		// END
 		return false
 	}
-	if tc.EPCount != other.EPCount {
+	if tc.epCount != other.epCount {
 		// DEBUG
 		fmt.Printf("tc.Equal: EPCOUNTS DIFFER %d vs %d\n",
-			tc.EPCount, other.EPCount)
+			tc.epCount, other.epCount)
 		// END
 		return false
 	}
@@ -244,8 +253,8 @@ func (tc *Cluster) Equal(any interface{}) bool {
 	}
 	// Members			[]*ClientInfo
 	for i := uint32(0); i < tc.GetCurSize(); i++ {
-		rcMember := tc.ClMembers[i]
-		otherMember := other.ClMembers[i]
+		rcMember := tc.clMembers[i]
+		otherMember := other.clMembers[i]
 		if !rcMember.Equal(otherMember) {
 			return false
 		}
@@ -259,16 +268,16 @@ func (tc *Cluster) Strings() (ss []string) {
 
 	ss = []string{"testCluster {"}
 
-	ss = append(ss, fmt.Sprintf("    Attrs: 0x%016x", tc.Attrs))
-	ss = append(ss, "    Name: "+tc.Name)
-	ss = append(ss, "    ID: "+hex.EncodeToString(tc.ID))
-	ss = append(ss, fmt.Sprintf("    EPCount: %d", tc.EPCount))
+	ss = append(ss, fmt.Sprintf("    Attrs: 0x%016x", tc.attrs))
+	ss = append(ss, "    Name: "+tc.name)
+	ss = append(ss, "    ID: "+hex.EncodeToString(tc.id))
+	ss = append(ss, fmt.Sprintf("    EPCount: %d", tc.epCount))
 	ss = append(ss, fmt.Sprintf("    curSize: %d", tc.curSize))
 	ss = append(ss, fmt.Sprintf("    maxSize: %d", tc.maxSize))
 
 	ss = append(ss, "    Members {")
-	for i := 0; i < len(tc.ClMembers); i++ {
-		mem := tc.ClMembers[i].Strings()
+	for i := 0; i < len(tc.clMembers); i++ {
+		mem := tc.clMembers[i].Strings()
 		for i := 0; i < len(mem); i++ {
 			ss = append(ss, "        "+mem[i])
 		}

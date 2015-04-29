@@ -29,8 +29,7 @@ func (s *XLSuite) TestInQ(c *C) {
 	c.Assert(len(inQ.Msgs), Equals, 0)
 
 	nodeName := rng.NextFileName(8)
-	lfs, err := s.makeUniqueLFS(c, rng)
-	c.Assert(err, IsNil)
+	lfs := s.makeUniqueLFS(c, rng)
 	c.Assert(lfs, NotNil)
 
 	id, err := xi.New(nil)
@@ -61,8 +60,7 @@ func (s *XLSuite) TestInMain(c *C) {
 	rng := xr.MakeSimpleRNG()
 
 	nodeName := rng.NextFileName(8)
-	lfs, err := s.makeUniqueLFS(c, rng)
-	c.Assert(err, IsNil)
+	lfs := s.makeUniqueLFS(c, rng)
 	c.Assert(lfs, NotNil)
 
 	// DEBUG

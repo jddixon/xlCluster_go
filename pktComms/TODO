@@ -1,17 +1,26 @@
 xlCluster_go/pktComms/TODO 
 
-2015-04-28
+2015-04-29
+    * misc_test should revert to being just a library of test 
+        functions, with no Test routine in it
+        - call this lib_test.go
+
+2015-04-29 (edited from -28)
     * helloGoodbyte_test.go needs to be completed !
         - replace xlReg ephemeral server with simple server running
             the local protocol
     * inQ_test.go needs to be completed
     * keepAlive_test.go needs to be written -- it's currently just a
         stub -- but without any dependency on xlReg
-    * revise misc_test.go to remove dependency on xlReg or just
-        drop the test entirely
-        - replace xlReg ephemeral server as described above
+    * revise misc_test.go to remove dependency on xlReg or just         * DONE
+        drop the test entirely                                          * NO...
+        - replace xlReg ephemeral server as described above             * SKIP
 
-    * revise pktLayer.go to remove dependency on xlReg (uses constant)
+    * revise pktLayer.go to remove dependency on xlReg (uses constant)  * DONE
+
+    * revise to either force encryption of all communications (using
+        aes_cnx helloAndREply and the AesSession) 
+    * or make this optional
 
 -------------------
 FROM paxos_go/TODO:

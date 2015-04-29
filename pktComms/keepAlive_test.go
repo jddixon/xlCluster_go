@@ -13,16 +13,19 @@ func (s *XLSuite) TestKeepAlives(c *C) {
 		fmt.Println("\nTEST_KEEP_ALIVES")
 	}
 	rng := xr.MakeSimpleRNG()
+	_ = rng
+
+	// XXX REMOVE ANY DEPENDENCIES ON xlReg XXX
 
 	// 1. Launch an ephemeral xlReg server --------------------------
-	eph, reg, regID, server := s.launchEphServer(c)
-	defer eph.Stop()
+	//eph, reg, regID, server := s.launchEphServer(c)
+	//defer eph.Stop()
 
 	// 2. Create a random cluster name and size ---------------------
-	clusterName, clusterAttrs, clusterID, K := s.createAndRegSoloCluster(c, rng,
-		reg, regID, server)
+	//clusterName, clusterAttrs, clusterID, K := s.createAndRegSoloCluster(c,
+	//   rng, reg, regID, server)
 
-	_, _, _, _ = clusterName, clusterAttrs, clusterID, K // XXX NOT YET USED
+	//_, _, _, _ = clusterName, clusterAttrs, clusterID, K // XXX NOT YET USED
 
 	////////////////////////////////////////////////////////////////////
 	// XXX COMPLETE helloGoodbye_test.go, THEN MODIFY WHAT FOLLOWS IN

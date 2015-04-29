@@ -15,38 +15,41 @@ func (s *XLSuite) TestHelloGoodbye(c *C) {
 		fmt.Println("\nTEST_HELLO_GOODBYE")
 	}
 	rng := xr.MakeSimpleRNG()
+	_ = rng
+
+	// XXX REMOVE ANY DEPENDENCIES ON xlReg XXX
 
 	// 1. Launch an ephemeral xlReg server --------------------------
-	eph, reg, regID, server := s.launchEphServer(c)
-	defer eph.Stop()
+	//eph, reg, regID, server := s.launchEphServer(c)
+	//defer eph.Stop()
 
-	// 2. Create a random cluster name and size; register it --------
-	fmt.Printf("TestHelloGoodbye 2\n")
-	clusterName, clusterAttrs, clusterID, K := s.createAndRegSoloCluster(
-		c, rng, reg, regID, server)
+	//// 2. Create a random cluster name and size; register it --------
+	//fmt.Printf("TestHelloGoodbye 2\n")
+	//clusterName, clusterAttrs, clusterID, K := s.createAndRegSoloCluster(
+	//	c, rng, reg, regID, server)
 
-	// 3  Create K cluster member PktLayers
-	fmt.Printf("TestHelloGoodbye 3\n")
-	pL, pLNames := s.createKMemberPktLayers(c, rng, server,
-		clusterName, clusterAttrs, clusterID, K)
+	//// 3  Create K cluster member PktLayers
+	//fmt.Printf("TestHelloGoodbye 3\n")
+	//pL, pLNames := s.createKMemberPktLayers(c, rng, server,
+	//	clusterName, clusterAttrs, clusterID, K)
 
-	// 4  Start the K clients running, each in a separate goroutine.
-	fmt.Printf("TestHelloGoodbye 4a\n")
-	for i := uint32(0); i < K; i++ {
-		go pL[i].JoinCluster()
-	}
-	fmt.Printf("TestHelloGoodbye 4b\n")
-	for i := uint32(0); i < K; i++ {
-		err := <-pL[i].DoneCh
-		// DEBUG
-		fmt.Printf("member %d, %-8s,  has joined ", i, pLNames[i])
-		if err == nil {
-			fmt.Println("successfully")
-		} else {
-			fmt.Printf("but returned an error %s\n", err)
-		}
-		// END
-	}
+	//// 4  Start the K clients running, each in a separate goroutine.
+	//fmt.Printf("TestHelloGoodbye 4a\n")
+	//for i := uint32(0); i < K; i++ {
+	//	go pL[i].JoinCluster()
+	//}
+	//fmt.Printf("TestHelloGoodbye 4b\n")
+	//for i := uint32(0); i < K; i++ {
+	//	err := <-pL[i].DoneCh
+	//	// DEBUG
+	//	fmt.Printf("member %d, %-8s,  has joined ", i, pLNames[i])
+	//	if err == nil {
+	//		fmt.Println("successfully")
+	//	} else {
+	//		fmt.Printf("but returned an error %s\n", err)
+	//	}
+	//	// END
+	//}
 
 	// 5  Tell all to say Hello; wait.
 

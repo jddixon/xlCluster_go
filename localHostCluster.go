@@ -26,8 +26,8 @@ func NewLocalHostCluster(name string, id *xi.NodeID, attrs uint64,
  * Call OpenAcc() on all constituent Nodes, which will activate acceptors.
  */
 func (lhc *LocalHostCluster) Start() (err error) {
-	for i := 0; err == nil && i < len(lhc.ClMembers); i++ {
-		err = lhc.ClMembers[i].OpenAcc()
+	for i := 0; err == nil && i < len(lhc.clMembers); i++ {
+		err = lhc.clMembers[i].OpenAcc()
 	}
 	return
 }
@@ -37,8 +37,8 @@ func (lhc *LocalHostCluster) Start() (err error) {
  */
 func (lhc *LocalHostCluster) Stop() (err error) {
 
-	for i := 0; err == nil && i < len(lhc.ClMembers); i++ {
-		err = lhc.ClMembers[i].CloseAcc()
+	for i := 0; err == nil && i < len(lhc.clMembers); i++ {
+		err = lhc.clMembers[i].CloseAcc()
 	}
 	return
 }
