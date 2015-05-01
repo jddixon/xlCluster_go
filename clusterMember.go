@@ -14,7 +14,7 @@ var (
 )
 
 type ClusterMember struct {
-	Attrs          uint64 // possibly negotiated with/decreed by reg server
+	Attrs          uint64 // possibly negotiated with/decreed by a reg server
 	ClusterName    string
 	ClusterID      *xi.NodeID
 	ClusterAttrs   uint64

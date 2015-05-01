@@ -27,9 +27,9 @@ func (s *XLSuite) TestMisc(c *C) {
 
 	rng := xr.MakeSimpleRNG()
 	maxSize := uint32(5)
-	kluster := s.makeSimpleCluster(c, rng, maxSize)
+	kluster, membership := s.makeSimpleCluster(c, rng, maxSize)
 
-	_ = kluster
+	_,_ = kluster, membership
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -53,7 +53,7 @@ func (s *XLSuite) makeNode(c *C, rng *xr.PRNG, epCount uint32) (
 	return
 }
 func (s *XLSuite) makeSimpleCluster(c *C, rng *xr.PRNG, maxSize uint32) (
-	kluster *xcl.Cluster) {
+	kluster *xcl.Cluster, membership []*xcl.ClusterMember) {
 
 	c.Assert(maxSize > 1, Equals, true)
 
@@ -63,20 +63,21 @@ func (s *XLSuite) makeSimpleCluster(c *C, rng *xr.PRNG, maxSize uint32) (
 	clusterName := dummyLFS[4:]
 
 	id := rng.SomeBytes(20) // size of SHA1
-	nodeID, err := xi.New(id)
+	clNodeID, err := xi.New(id)
 	c.Assert(err, IsNil)
-	attrs := uint64(0)
+	clAttrs := uint64(0)
 	epCount := uint32(2)
-	kluster, err = xcl.NewCluster(clusterName, nodeID, attrs, maxSize, epCount)
+	kluster, err = xcl.NewCluster(
+		clusterName, clNodeID, clAttrs, maxSize, epCount)
 	c.Assert(err, IsNil)
 	c.Assert(kluster, NotNil)
 
 	c.Assert(kluster.GetName(), Equals, clusterName)
-	c.Assert(bytes.Equal(kluster.GetNodeID().Value(), nodeID.Value()),
+	c.Assert(bytes.Equal(kluster.GetNodeID().Value(), clNodeID.Value()),
 		Equals, true)
 	c.Assert(kluster.GetCurSize(), Equals, uint32(0))
 	c.Assert(kluster.GetMaxSize(), Equals, maxSize)
-	c.Assert(kluster.GetAttrs(), Equals, attrs)
+	c.Assert(kluster.GetAttrs(),   Equals, clAttrs)
 	c.Assert(kluster.GetEPCount(), Equals, epCount)
 
 	// create enough Nodes to fully populate the cluster ------------
@@ -96,17 +97,35 @@ func (s *XLSuite) makeSimpleCluster(c *C, rng *xr.PRNG, maxSize uint32) (
 		}
 	}()
 	// create K=maxSize MemberInfo ----------------------------------
-	// XXX STUB XXX
-
+	var mInfos []*xcl.MemberInfo
+	for i := uint32(0); i < maxSize; i++ {
+		peer, err := xn.NewPeerFromNode(nodes[i])
+		c.Assert(err, IsNil)
+		mi, err := xcl.NewMemberInfo( uint64(0), peer)
+		c.Assert(err, IsNil)
+		c.Assert(mi, NotNil)
+		mInfos = append(mInfos, mi)
+	}
 	// create K ClusterMember ---------------------------------------
-	// XXX STUB XXX
-
+	for i := uint32(0); i < maxSize; i++ {
+		myAttrs := uint64(rng.Int63())
+		clMember := &xcl.ClusterMember {
+			Attrs:			myAttrs,
+			ClusterName:	clusterName,
+			ClusterID:		clNodeID,
+			ClusterAttrs:	clAttrs,
+			ClusterMaxSize:	maxSize,
+			EPCount:		epCount,
+			Node:			*nodes[i],
+		}
+		membership = append(membership, clMember)
+	}
 	// copy full MemberInfo list to each ClusterMember, setting self
-	// XXX STUB XXX
+	for i := uint32(0); i < maxSize; i++ {
+	
+	}
 
-	// copy full MemberInfo list to each ClusterMember, setting self
-	// XXX STUB XXX
-
+	// each member should open a connection to every other member
 	return
 }
 
