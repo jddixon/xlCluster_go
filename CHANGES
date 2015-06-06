@@ -3,6 +3,9 @@ xlCluster_go/CHANGES
 The version number and date in this file must be kept in sync with version.go
 -----------------------------------------------------------------------------
 
+v1.9.0
+    2015-06-05
+        * RSA public keys now in PEM format; change in xlNode_go    SLOC 1605
 v1.8.5
     2015-04-30
         * lib_test: create K MemberInfo and K ClusterMembers        SLOC 1554

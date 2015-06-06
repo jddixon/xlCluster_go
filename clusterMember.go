@@ -145,133 +145,155 @@ func ParseClusterMemberFromStrings(ss []string) (
 		memberInfos    []*MemberInfo
 		epCount        uint32
 	)
-	line := xn.NextNBLine(&ss)
-	if line != "clusterMember {" {
-		err = IllFormedClusterMember
-	} else {
-		node, rest, err = xn.ParseFromStrings(ss)
-	}
+	line, err := xn.NextNBLine(&ss)
 	if err == nil {
-		line = xn.NextNBLine(&rest)
-		parts := strings.Split(line, ": ")
-		if len(parts) == 2 && parts[0] == "attrs" {
-			var n int
-			raw := strings.TrimSpace(parts[1])
-			n, err = strconv.Atoi(raw)
-			if err == nil {
-				attrs = uint64(n)
-			}
-		} else {
+		if line != "clusterMember {" {
 			err = IllFormedClusterMember
+		} else {
+			node, rest, err = xn.ParseFromStrings(ss)
 		}
 	}
 	if err == nil {
-		line = xn.NextNBLine(&rest)
-		parts := strings.Split(line, ": ")
-		if len(parts) == 2 && parts[0] == "clusterName" {
-			clusterName = strings.TrimLeft(parts[1], " \t")
-		} else {
-			err = IllFormedClusterMember
+		line, err = xn.NextNBLine(&rest)
+		if err == nil {
+			parts := strings.Split(line, ": ")
+			if len(parts) == 2 && parts[0] == "attrs" {
+				var n int
+				raw := strings.TrimSpace(parts[1])
+				n, err = strconv.Atoi(raw)
+				if err == nil {
+					attrs = uint64(n)
+				}
+			} else {
+				err = IllFormedClusterMember
+			}
 		}
 	}
 	if err == nil {
-		line = xn.NextNBLine(&rest)
-		parts := strings.Split(line, ": ")
-		if len(parts) == 2 && parts[0] == "clusterID" {
-			var h []byte
-			raw := strings.TrimSpace(parts[1])
-			h, err = hex.DecodeString(raw)
-			if err == nil {
-				clusterID, err = xi.New(h)
+		line, err = xn.NextNBLine(&rest)
+		if err == nil {
+			parts := strings.Split(line, ": ")
+			if len(parts) == 2 && parts[0] == "clusterName" {
+				clusterName = strings.TrimLeft(parts[1], " \t")
+			} else {
+				err = IllFormedClusterMember
 			}
-		} else {
-			err = IllFormedClusterMember
 		}
 	}
 	if err == nil {
-		line = xn.NextNBLine(&rest)
-		parts := strings.Split(line, ": ")
-		if len(parts) == 2 && parts[0] == "clusterAttrs" {
-			var n int
-			raw := strings.TrimSpace(parts[1])
-			n, err = strconv.Atoi(raw)
-			if err == nil {
-				clusterAttrs = uint64(n)
+		line, err = xn.NextNBLine(&rest)
+		if err == nil {
+			parts := strings.Split(line, ": ")
+			if len(parts) == 2 && parts[0] == "clusterID" {
+				var h []byte
+				raw := strings.TrimSpace(parts[1])
+				h, err = hex.DecodeString(raw)
+				if err == nil {
+					clusterID, err = xi.New(h)
+				}
+			} else {
+				err = IllFormedClusterMember
 			}
-		} else {
-			err = IllFormedClusterMember
 		}
 	}
 	if err == nil {
-		line = xn.NextNBLine(&rest)
-		parts := strings.Split(line, ": ")
-		if len(parts) == 2 && parts[0] == "clusterMaxSize" {
-			var n int
-			raw := strings.TrimSpace(parts[1])
-			n, err = strconv.Atoi(raw)
-			if err == nil {
-				clusterMaxSize = uint32(n)
+		line, err = xn.NextNBLine(&rest)
+		if err == nil {
+			parts := strings.Split(line, ": ")
+			if len(parts) == 2 && parts[0] == "clusterAttrs" {
+				var n int
+				raw := strings.TrimSpace(parts[1])
+				n, err = strconv.Atoi(raw)
+				if err == nil {
+					clusterAttrs = uint64(n)
+				}
+			} else {
+				err = IllFormedClusterMember
 			}
-		} else {
-			err = IllFormedClusterMember
 		}
 	}
 	if err == nil {
-		line = xn.NextNBLine(&rest)
-		parts := strings.Split(line, ": ")
-		if len(parts) == 2 && parts[0] == "epCount" {
-			var n int
-			raw := strings.TrimSpace(parts[1])
-			n, err = strconv.Atoi(raw)
-			if err == nil {
-				epCount = uint32(n)
+		line, err = xn.NextNBLine(&rest)
+		if err == nil {
+			parts := strings.Split(line, ": ")
+			if len(parts) == 2 && parts[0] == "clusterMaxSize" {
+				var n int
+				raw := strings.TrimSpace(parts[1])
+				n, err = strconv.Atoi(raw)
+				if err == nil {
+					clusterMaxSize = uint32(n)
+				}
+			} else {
+				err = IllFormedClusterMember
 			}
-		} else {
-			err = IllFormedClusterMember
 		}
 	}
 	if err == nil {
-		line = xn.NextNBLine(&rest)
-		parts := strings.Split(line, ": ")
-		if len(parts) == 2 && parts[0] == "selfIndex" {
-			var n int
-			raw := strings.TrimSpace(parts[1])
-			n, err = strconv.Atoi(raw)
-			if err == nil {
-				selfIndex = uint32(n)
+		line, err = xn.NextNBLine(&rest)
+		if err == nil {
+			parts := strings.Split(line, ": ")
+			if len(parts) == 2 && parts[0] == "epCount" {
+				var n int
+				raw := strings.TrimSpace(parts[1])
+				n, err = strconv.Atoi(raw)
+				if err == nil {
+					epCount = uint32(n)
+				}
+			} else {
+				err = IllFormedClusterMember
 			}
-		} else {
-			err = IllFormedClusterMember
+		}
+	}
+	if err == nil {
+		line, err = xn.NextNBLine(&rest)
+		if err == nil {
+			parts := strings.Split(line, ": ")
+			if len(parts) == 2 && parts[0] == "selfIndex" {
+				var n int
+				raw := strings.TrimSpace(parts[1])
+				n, err = strconv.Atoi(raw)
+				if err == nil {
+					selfIndex = uint32(n)
+				}
+			} else {
+				err = IllFormedClusterMember
+			}
 		}
 	}
 
 	if err == nil {
-		line = xn.NextNBLine(&rest)
-		if line == "members {" {
-			line = strings.TrimSpace(rest[0]) // a peek
-			for line == "memberInfo {" {
-				var mi *MemberInfo
-				mi, rest, err = ParseMemberInfoFromStrings(rest)
-				if err != nil {
-					break
-				} else {
-					memberInfos = append(memberInfos, mi)
-					line = strings.TrimSpace(rest[0]) // a peek
+		line, err = xn.NextNBLine(&rest)
+		if err == nil {
+			if line == "members {" {
+				line = strings.TrimSpace(rest[0]) // a peek
+				for line == "memberInfo {" {
+					var mi *MemberInfo
+					mi, rest, err = ParseMemberInfoFromStrings(rest)
+					if err != nil {
+						break
+					} else {
+						memberInfos = append(memberInfos, mi)
+						line = strings.TrimSpace(rest[0]) // a peek
+					}
 				}
-			}
-			// we need a closing brace at this point
-			line = xn.NextNBLine(&rest)
-			if line != "}" {
+				// we need a closing brace at this point
+				line, err = xn.NextNBLine(&rest)
+				if err == nil {
+					if line != "}" {
+						err = IllFormedClusterMember
+					}
+				}
+			} else {
 				err = IllFormedClusterMember
 			}
-		} else {
-			err = IllFormedClusterMember
 		}
 	}
 	if err == nil {
-		line = xn.NextNBLine(&rest)
-		if line != "}" {
-			err = IllFormedClusterMember
+		line, err = xn.NextNBLine(&rest)
+		if err == nil {
+			if line != "}" {
+				err = IllFormedClusterMember
+			}
 		}
 	}
 	if err == nil {

@@ -29,7 +29,7 @@ func (s *XLSuite) TestMisc(c *C) {
 	maxSize := uint32(5)
 	kluster, membership := s.makeSimpleCluster(c, rng, maxSize)
 
-	_,_ = kluster, membership
+	_, _ = kluster, membership
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -77,7 +77,7 @@ func (s *XLSuite) makeSimpleCluster(c *C, rng *xr.PRNG, maxSize uint32) (
 		Equals, true)
 	c.Assert(kluster.GetCurSize(), Equals, uint32(0))
 	c.Assert(kluster.GetMaxSize(), Equals, maxSize)
-	c.Assert(kluster.GetAttrs(),   Equals, clAttrs)
+	c.Assert(kluster.GetAttrs(), Equals, clAttrs)
 	c.Assert(kluster.GetEPCount(), Equals, epCount)
 
 	// create enough Nodes to fully populate the cluster ------------
@@ -101,7 +101,7 @@ func (s *XLSuite) makeSimpleCluster(c *C, rng *xr.PRNG, maxSize uint32) (
 	for i := uint32(0); i < maxSize; i++ {
 		peer, err := xn.NewPeerFromNode(nodes[i])
 		c.Assert(err, IsNil)
-		mi, err := xcl.NewMemberInfo( uint64(0), peer)
+		mi, err := xcl.NewMemberInfo(uint64(0), peer)
 		c.Assert(err, IsNil)
 		c.Assert(mi, NotNil)
 		mInfos = append(mInfos, mi)
@@ -109,20 +109,20 @@ func (s *XLSuite) makeSimpleCluster(c *C, rng *xr.PRNG, maxSize uint32) (
 	// create K ClusterMember ---------------------------------------
 	for i := uint32(0); i < maxSize; i++ {
 		myAttrs := uint64(rng.Int63())
-		clMember := &xcl.ClusterMember {
-			Attrs:			myAttrs,
-			ClusterName:	clusterName,
-			ClusterID:		clNodeID,
-			ClusterAttrs:	clAttrs,
-			ClusterMaxSize:	maxSize,
-			EPCount:		epCount,
-			Node:			*nodes[i],
+		clMember := &xcl.ClusterMember{
+			Attrs:          myAttrs,
+			ClusterName:    clusterName,
+			ClusterID:      clNodeID,
+			ClusterAttrs:   clAttrs,
+			ClusterMaxSize: maxSize,
+			EPCount:        epCount,
+			Node:           *nodes[i],
 		}
 		membership = append(membership, clMember)
 	}
 	// copy full MemberInfo list to each ClusterMember, setting self
 	for i := uint32(0); i < maxSize; i++ {
-	
+
 	}
 
 	// each member should open a connection to every other member
