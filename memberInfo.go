@@ -93,27 +93,29 @@ func (mi *MemberInfo) String() string {
 }
 func collectAttrs(mi *MemberInfo, ss []string) (rest []string, err error) {
 	rest = ss
-	line := xn.NextNBLine(&rest) // trims
-	// attrs line looks like "attrs: 0xHHHH..." where H is a hex digit
-	if strings.HasPrefix(line, "attrs: 0x") {
-		var val []byte
-		var attrs uint64
-		line := line[9:]
-		val, err = hex.DecodeString(line)
-		if err == nil {
-			if len(val) != 8 {
-				err = WrongNumberOfBytesInAttrs
-			} else {
-				for i := 0; i < 8; i++ {
-					// assume little-endian ; but printf has put
-					// high order bytes first - ie, it's big-endian
-					attrs |= uint64(val[i]) << uint(8*(7-i))
+	line, err := xn.NextNBLine(&rest) // trims
+	if err == nil {
+		// attrs line looks like "attrs: 0xHHHH..." where H is a hex digit
+		if strings.HasPrefix(line, "attrs: 0x") {
+			var val []byte
+			var attrs uint64
+			line := line[9:]
+			val, err = hex.DecodeString(line)
+			if err == nil {
+				if len(val) != 8 {
+					err = WrongNumberOfBytesInAttrs
+				} else {
+					for i := 0; i < 8; i++ {
+						// assume little-endian ; but printf has put
+						// high order bytes first - ie, it's big-endian
+						attrs |= uint64(val[i]) << uint(8*(7-i))
+					}
+					mi.Attrs = attrs
 				}
-				mi.Attrs = attrs
 			}
+		} else {
+			err = BadAttrsLine
 		}
-	} else {
-		err = BadAttrsLine
 	}
 	return
 }
@@ -128,6 +130,7 @@ func ParseMemberInfo(s string) (
 func ParseMemberInfoFromStrings(ss []string) (
 	mi *MemberInfo, rest []string, err error) {
 
+	var line string
 	bn, rest, err := xn.ParseBNFromStrings(ss, "memberInfo")
 	if err == nil {
 		peerPart := &xn.Peer{
@@ -140,9 +143,15 @@ func ParseMemberInfoFromStrings(ss []string) (
 		rest, err = xn.CollectConnectors(peerPart, rest)
 		if err == nil {
 			rest, err = collectAttrs(mi, rest)
-			line := xn.NextNBLine(&rest)
-			if line != "}" {
-				err = MissingClosingBrace
+			if err == nil {
+				line, err = xn.NextNBLine(&rest)
+				if err == nil {
+					if line == "" {
+						if line != "}" {
+							err = MissingClosingBrace
+						}
+					}
+				}
 			}
 		}
 	}
