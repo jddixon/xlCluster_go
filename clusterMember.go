@@ -3,6 +3,7 @@ package cluster
 import (
 	"encoding/hex"
 	"fmt"
+	xc "github.com/jddixon/xlCrypto_go"
 	xi "github.com/jddixon/xlNodeID_go"
 	xn "github.com/jddixon/xlNode_go"
 	"strconv"
@@ -145,7 +146,7 @@ func ParseClusterMemberFromStrings(ss []string) (
 		memberInfos    []*MemberInfo
 		epCount        uint32
 	)
-	line, err := xn.NextNBLine(&ss)
+	line, err := xc.NextNBLine(&ss)
 	if err == nil {
 		if line != "clusterMember {" {
 			err = IllFormedClusterMember
@@ -154,7 +155,7 @@ func ParseClusterMemberFromStrings(ss []string) (
 		}
 	}
 	if err == nil {
-		line, err = xn.NextNBLine(&rest)
+		line, err = xc.NextNBLine(&rest)
 		if err == nil {
 			parts := strings.Split(line, ": ")
 			if len(parts) == 2 && parts[0] == "attrs" {
@@ -170,7 +171,7 @@ func ParseClusterMemberFromStrings(ss []string) (
 		}
 	}
 	if err == nil {
-		line, err = xn.NextNBLine(&rest)
+		line, err = xc.NextNBLine(&rest)
 		if err == nil {
 			parts := strings.Split(line, ": ")
 			if len(parts) == 2 && parts[0] == "clusterName" {
@@ -181,7 +182,7 @@ func ParseClusterMemberFromStrings(ss []string) (
 		}
 	}
 	if err == nil {
-		line, err = xn.NextNBLine(&rest)
+		line, err = xc.NextNBLine(&rest)
 		if err == nil {
 			parts := strings.Split(line, ": ")
 			if len(parts) == 2 && parts[0] == "clusterID" {
@@ -197,7 +198,7 @@ func ParseClusterMemberFromStrings(ss []string) (
 		}
 	}
 	if err == nil {
-		line, err = xn.NextNBLine(&rest)
+		line, err = xc.NextNBLine(&rest)
 		if err == nil {
 			parts := strings.Split(line, ": ")
 			if len(parts) == 2 && parts[0] == "clusterAttrs" {
@@ -213,7 +214,7 @@ func ParseClusterMemberFromStrings(ss []string) (
 		}
 	}
 	if err == nil {
-		line, err = xn.NextNBLine(&rest)
+		line, err = xc.NextNBLine(&rest)
 		if err == nil {
 			parts := strings.Split(line, ": ")
 			if len(parts) == 2 && parts[0] == "clusterMaxSize" {
@@ -229,7 +230,7 @@ func ParseClusterMemberFromStrings(ss []string) (
 		}
 	}
 	if err == nil {
-		line, err = xn.NextNBLine(&rest)
+		line, err = xc.NextNBLine(&rest)
 		if err == nil {
 			parts := strings.Split(line, ": ")
 			if len(parts) == 2 && parts[0] == "epCount" {
@@ -245,7 +246,7 @@ func ParseClusterMemberFromStrings(ss []string) (
 		}
 	}
 	if err == nil {
-		line, err = xn.NextNBLine(&rest)
+		line, err = xc.NextNBLine(&rest)
 		if err == nil {
 			parts := strings.Split(line, ": ")
 			if len(parts) == 2 && parts[0] == "selfIndex" {
@@ -262,7 +263,7 @@ func ParseClusterMemberFromStrings(ss []string) (
 	}
 
 	if err == nil {
-		line, err = xn.NextNBLine(&rest)
+		line, err = xc.NextNBLine(&rest)
 		if err == nil {
 			if line == "members {" {
 				line = strings.TrimSpace(rest[0]) // a peek
@@ -277,7 +278,7 @@ func ParseClusterMemberFromStrings(ss []string) (
 					}
 				}
 				// we need a closing brace at this point
-				line, err = xn.NextNBLine(&rest)
+				line, err = xc.NextNBLine(&rest)
 				if err == nil {
 					if line != "}" {
 						err = IllFormedClusterMember
@@ -289,7 +290,7 @@ func ParseClusterMemberFromStrings(ss []string) (
 		}
 	}
 	if err == nil {
-		line, err = xn.NextNBLine(&rest)
+		line, err = xc.NextNBLine(&rest)
 		if err == nil {
 			if line != "}" {
 				err = IllFormedClusterMember

@@ -9,6 +9,6 @@ package cluster
 // with each part being one or two digits.  It is converted
 // into a uint32 in in_handler.go init()
 const (
-	VERSION      = "1.9"
-	VERSION_DATE = "2015-06-05"
+	VERSION      = "1.9.1"
+	VERSION_DATE = "2015-06-15"
 )

@@ -3,6 +3,9 @@ xlCluster_go/CHANGES
 The version number and date in this file must be kept in sync with version.go
 -----------------------------------------------------------------------------
 
+v1.9.1
+    2015-06-15
+        * nextNBLine etc moved to xlCrypto                          SLOC 1608
 v1.9.0
     2015-06-05
         * RSA public keys now in PEM format; change in xlNode_go    SLOC 1605
