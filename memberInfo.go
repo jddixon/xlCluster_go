@@ -9,6 +9,7 @@ import (
 	//"crypto/rsa"
 	"encoding/hex"
 	"fmt"
+	xc "github.com/jddixon/xlCrypto_go"
 	xn "github.com/jddixon/xlNode_go"
 	"strings"
 )
@@ -93,7 +94,7 @@ func (mi *MemberInfo) String() string {
 }
 func collectAttrs(mi *MemberInfo, ss []string) (rest []string, err error) {
 	rest = ss
-	line, err := xn.NextNBLine(&rest) // trims
+	line, err := xc.NextNBLine(&rest) // trims
 	if err == nil {
 		// attrs line looks like "attrs: 0xHHHH..." where H is a hex digit
 		if strings.HasPrefix(line, "attrs: 0x") {
@@ -144,7 +145,7 @@ func ParseMemberInfoFromStrings(ss []string) (
 		if err == nil {
 			rest, err = collectAttrs(mi, rest)
 			if err == nil {
-				line, err = xn.NextNBLine(&rest)
+				line, err = xc.NextNBLine(&rest)
 				if err == nil {
 					if line == "" {
 						if line != "}" {

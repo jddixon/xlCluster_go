@@ -10,6 +10,7 @@ import (
 	"encoding/hex"
 	"fmt"
 	ha "github.com/jddixon/hamt_go"
+	xc "github.com/jddixon/xlCrypto_go"
 	xi "github.com/jddixon/xlNodeID_go"
 	xn "github.com/jddixon/xlNode_go"
 	xm "github.com/jddixon/xlUtil_go/math"
@@ -308,13 +309,13 @@ func ParseClusterFromStrings(ss []string) (
 	)
 	rest = ss
 
-	line, err := xn.NextNBLine(&rest) // the line is trimmed
+	line, err := xc.NextNBLine(&rest) // the line is trimmed
 	if err == nil {
 		if line != "testCluster {" {
 			fmt.Println("MISSING regCluster {")
 			err = IllFormedCluster
 		} else {
-			line, err = xn.NextNBLine(&rest)
+			line, err = xc.NextNBLine(&rest)
 			if err == nil {
 				if strings.HasPrefix(line, "Attrs: ") {
 					var i int64
@@ -330,7 +331,7 @@ func ParseClusterFromStrings(ss []string) (
 		}
 	}
 	if err == nil {
-		line, err = xn.NextNBLine(&rest)
+		line, err = xc.NextNBLine(&rest)
 		if err == nil {
 			if strings.HasPrefix(line, "Name: ") {
 				name = line[6:]
@@ -342,7 +343,7 @@ func ParseClusterFromStrings(ss []string) (
 	}
 	if err == nil {
 		// collect ID
-		line, err = xn.NextNBLine(&rest)
+		line, err = xc.NextNBLine(&rest)
 		if err == nil {
 			if strings.HasPrefix(line, "ID: ") {
 				var val []byte
@@ -357,7 +358,7 @@ func ParseClusterFromStrings(ss []string) (
 		}
 	}
 	if err == nil {
-		line, err = xn.NextNBLine(&rest)
+		line, err = xc.NextNBLine(&rest)
 		if err == nil {
 			if strings.HasPrefix(line, "EPCount: ") {
 				var count int
@@ -372,7 +373,7 @@ func ParseClusterFromStrings(ss []string) (
 		}
 	}
 	if err == nil {
-		line, err = xn.NextNBLine(&rest)
+		line, err = xc.NextNBLine(&rest)
 		if err == nil {
 			if strings.HasPrefix(line, "curSize: ") {
 				var size int
@@ -387,7 +388,7 @@ func ParseClusterFromStrings(ss []string) (
 		}
 	}
 	if err == nil {
-		line, err = xn.NextNBLine(&rest)
+		line, err = xc.NextNBLine(&rest)
 		if err == nil {
 			if strings.HasPrefix(line, "maxSize: ") {
 				var size int
@@ -406,7 +407,7 @@ func ParseClusterFromStrings(ss []string) (
 	}
 	if err == nil {
 		tc.curSize = curSize
-		line, err = xn.NextNBLine(&rest)
+		line, err = xc.NextNBLine(&rest)
 		if err == nil {
 			if line == "Members {" {
 				for {
@@ -432,7 +433,7 @@ func ParseClusterFromStrings(ss []string) (
 
 	// expect closing brace for Members list
 	if err == nil {
-		line, err = xn.NextNBLine(&rest)
+		line, err = xc.NextNBLine(&rest)
 		if err == nil {
 			if line != "}" {
 				err = MissingClosingBrace
@@ -441,7 +442,7 @@ func ParseClusterFromStrings(ss []string) (
 	}
 	// expect closing brace  for cluster
 	if err == nil {
-		line, err = xn.NextNBLine(&rest)
+		line, err = xc.NextNBLine(&rest)
 		if err == nil {
 			if line != "}" {
 				err = MissingClosingBrace
