@@ -1,5 +1,9 @@
 xlCluster_go/TODO
 
+2015-08-15
+    * README/index.md need some figures
+    * need sketch of the use of the Paxos communications protocol
+
 2015-04-28
     * Cluster field names should start with lower case                  * DONE
     * there should be a getter for each such field                      * DONE

@@ -3,6 +3,9 @@ xlCluster_go/CHANGES
 The version number and date in this file must be kept in sync with version.go
 -----------------------------------------------------------------------------
 
+v1.9.2
+    2015-08-15
+        * elaborated README/index.md; add countem                   SLOC 1611
 v1.9.1
     2015-06-15
         * nextNBLine etc moved to xlCrypto                          SLOC 1608
