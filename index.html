@@ -9,51 +9,56 @@
 </head>
 <body>
 <div class="content">
-<h1>xlCluster_go</h1>
+<h1 class="libTop">xlCluster_go</h1>
 
 <p>An XLattice cluster is a group of cooperating servers.  Each has a
-cryptograpic identity.  That is, each has a <a href="https://jddixon.github.io/nodeID_go">
-NodeID</a>, an RSA key used
-for creating digital signatures (<strong>skPriv</strong>), and an RSA key used for
-encrypting data (<strong>ckPriv</strong>).  In other words each cluster member is
-or carries an <a href="https://jddixon.github.io/xlNode_go">XLattice Node</a>,
+cryptograpic identity.  That is, each has</p>
+
+<ul>
+<li>a <a href="https://jddixon.github.io/nodeID_go"> NodeID</a>,</li>
+<li>an RSA key used for creating digital signatures (<strong>skPriv</strong>), and</li>
+<li>an RSA key used for encrypting data (<strong>ckPriv</strong>).<br /></li>
+</ul>
+
+<p>In other words each cluster member is
+or carries an
+<a href="https://jddixon.github.io/xlNode_go">XLattice Node</a>,
 which incorporates that cryptographic identity.</p>
 
-<p>The NodeID is a unique 160- or
-256-bit number.  Each of skPriv and ckPriv is a RSA private key, normally
+<p>The NodeID is a unique 160- or 256-bit number.<br />
+Each of <code>skPriv</code> and <code>ckPriv</code>is a RSA private key, normally
 at least 2048 bits in length.  Each has a corresponding public key
 (<strong>sk</strong> and <strong>ck</strong> respectively) which can be distributed freely without
 compromising the secrecy of its private key counterpart.</p>
 
 <p>You open communications with an XLattice node by using it well-known
-public key to encrypt a secret, one that only that cluster member can
-decrypt, because only that cluster member has the corresponding private
-key.  The secret is an AES key.  That key is used to encrypt a second key,
+public key <code>ck</code> to encrypt a secret, one that only that cluster member can
+decrypt, because only that node (cluster member) has the corresponding private
+key.  The secret is an AES key.  The RSA-encrypted secret is used to encrypt
+a second key,
 the AES key used for the rest of the messages in the communications session.
 The cluster member sends the encrypted second key back to whoever has
 initiated the conversation, and further messages between the two machines
 are encrypted using the second key.</p>
 
-<p>The members of the cluster have at least two well known ports.  These
+<p>The members of the cluster have at least two well-known ports.  These
 are 16-bit numbers, as is conventional on network servers.  All of the
-servers will listen on one of the ports (the same 16-bit number on each
+members will listen on one of the ports (the same 16-bit number on each
 member) for messages from other members of the cluster.  This port number
 will not generally be published: it is private to the cluster and any
 messages received on this port from other hosts (other machines on the
-network but not members of the cluster) will generally be ignored.</p>
+network but not members of the cluster) will be ignored.</p>
 
-<p>The
-second port, which has the same 16-bit number on all members of the cluster,
+<p>The second port, whose 16-bit number is shared by all members of the cluster,
 is used for communications between members of the cluster and the outside
 world.  That is, this port number will generally be published, and clients
 (legitimate users of the cluster&rsquo;s services) communicate with the cluster
 through this port using whatever protocol is appropriate for the service
 provided by the cluster.</p>
 
-<h2>On-line Documentation</h2>
+<h2>Project Status</h2>
 
-<p>More information on the <strong>xlCluster_go</strong> project can be found
-<a href="https://jddixon.github.io/xlCluster_go">here</a></p>
+<p>Partially implemented.</p>
 
 <h2>Licensing</h2>
 <p><a rel="license" href="http://creativecommons.org/licenses/by/4.0/"><img alt="Creative Commons License" style="border-width:0" src="https://i.creativecommons.org/l/by/4.0/88x31.png" /></a><br />The material on this github.io website is licensed under a <a rel="license" href="http://creativecommons.org/licenses/by/4.0/">Creative Commons Attribution 4.0 International License</a>.</p>
