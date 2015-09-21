@@ -3,6 +3,9 @@ xlCluster_go/CHANGES
 The version number and date in this file must be kept in sync with version.go
 -----------------------------------------------------------------------------
 
+v1.9.3
+    2015-09-20
+        * {README,index}.md somewhat clarified 
 v1.9.2
     2015-08-15
         * elaborated README/index.md; add countem                   SLOC 1611
