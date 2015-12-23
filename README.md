@@ -3,7 +3,7 @@
 An XLattice cluster is a group of cooperating servers.  Each has a
 cryptograpic identity.  That is, each has
 
-* a [ NodeID](https://jddixon.github.io/nodeID_go),
+* a [ NodeID](https://jddixon.github.io/xlNodeID_go),
 * an RSA key used for creating digital signatures (**skPriv**), and
 * an RSA key used for encrypting data (**ckPriv**).
 
@@ -50,4 +50,4 @@ Partially implemented.
 ## On-line Documentation
 
 More information on the **xlCluster_go** project can be found
-[here](://jddixon.github.io/xlCluster_go)
+[here](https://jddixon.github.io/xlCluster_go)
