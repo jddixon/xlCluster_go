@@ -1,6 +1,6 @@
 package cluster
 
 const (
-	VERSION      = "1.9.5"
-	VERSION_DATE = "2015-12-23"
+	VERSION      = "1.9.6"
+	VERSION_DATE = "2016-01-13"
 )

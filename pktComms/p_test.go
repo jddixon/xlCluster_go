@@ -2,7 +2,8 @@ package pktComms
 
 import (
 	"bytes"
-	"code.google.com/p/goprotobuf/proto"
+	//"code.google.com/p/goprotobuf/proto"
+	"github.com/golang/protobuf/proto"
 	"crypto/sha1"
 	"encoding/binary"
 	"fmt"
