@@ -2,11 +2,10 @@ package pktComms
 
 import (
 	"bytes"
-	//"code.google.com/p/goprotobuf/proto"
-	"github.com/golang/protobuf/proto"
 	"crypto/sha1"
 	"encoding/binary"
 	"fmt"
+	"github.com/golang/protobuf/proto"
 	xr "github.com/jddixon/rnglib_go"
 	xu "github.com/jddixon/xlUtil_go"
 	. "gopkg.in/check.v1"
