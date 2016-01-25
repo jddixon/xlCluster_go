@@ -3,6 +3,9 @@ xlCluster_go/CHANGES
 The version number and date in this file must be kept in sync with version.go
 -----------------------------------------------------------------------------
 
+v1.9.7
+    2016-01-25
+        * minor edits                                               SLOC 1014
 v1.9.6
     2016-01-13
         * stop using code.google.com                                SLOC 1611
@@ -51,5 +54,6 @@ v1.7.1
 v1.7.0
     2014-11-17
         * split from xlReg_go v1.6.4                                SLOC 
+
 
 

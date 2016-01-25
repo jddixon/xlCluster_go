@@ -1,3 +1,10 @@
-pySloc -C go \
-    bash:countem    \
-    $@
+cd ~/dev/go/src/github.com/jddixon/xlCluster_go
+
+rm -rf tmp/*
+rm -rf pktComms/tmp/*
+
+gofmt -w .
+
+pySloc -v -C go -X "^junk" $@      \
+    bash:countem        \
+ 
