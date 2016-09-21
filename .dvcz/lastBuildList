@@ -7,20 +7,21 @@ zPjEShF9rvcNa9XEy1dKpcDz9Szbm2SlxOgM83fDDGtOq4SSCSqndtxrOvXXPB57
 H1mJV/FmerbXRPm5ERJVNIxtLk7Gr2Ce45FVlWyJGMhpfVlKkkk+bRQ02OFfazJI
 GQIDAQAB
 -----END RSA PUBLIC KEY-----
-xlCluster_go v1.9.10
-2016-07-01 16:19:30
-# START CONTENT #
+xlCluster_go v1.9.11
+2016-09-21 19:27:36
+# BEGIN CONTENT #
 xlCluster_go
- .copyright 803f3e50518123ef8a08d34f2238e89b62d0c9a2
  .dvcz
-  builds dc0323bca7983109f04590b32e94ff9716fa5286
-  lastBuildList 22143a1c99e3f243e16cc2f80871ef2fe6c4f0bc
-  projCfg 134d659c52bd4dfa55cf60c8e3b409cc67f5b7c5
-  projCfg.local 5d9578ed0304f6727b6394abd8db82c88257dc3b
-  version 1f403e189c2cdc7d65650c2abaee0eae338cf271
+  builds 633e0f5c9c272911e6a45100fed68fa9e2f596b8
+  copyright 803f3e50518123ef8a08d34f2238e89b62d0c9a2
+  lastBuildList 4889e0f46ed62c05def6d1307bdfe8b38b8700b3
+  license 5977a55c75bb4612004451a56b0b4c22d9d3311d
+  projCfg 4634a49e086b473cad509fe0a416dcafd95cfd10
+  projCfg.local 95708f8cd57bda79664f040d33992b8ce3964100
+  version 41a8a1560e8564b252e7cbe301dd4d8d27ef1418
  .gitignore ec0f9002629753cd248c6a672ef3de695c30f4b7
- CHANGES a7b547b7551a96378b85d15e844017bc13646faf
- LICENSE.md d1cecfadc47b23486f6bc8a863cfdde348c3eb46
+ CHANGES 4b18de1256cec4d67b1097e678eb6ce94c6fb39e
+ LICENSE-MIT.md d1cecfadc47b23486f6bc8a863cfdde348c3eb46
  README.md 38edebc1b3275b364595d865fb4e13be9b9a637a
  TODO 64a608035f0f9bc03de6ad8ab934fb862943793d
  bkp2U 5f34bf9ace5ff110bfe4d2ce2e89461fdf079940
@@ -28,7 +29,7 @@ xlCluster_go
  clusterMember.go 8ead3a9f949a40524f4b9eb85f8d4f30a2c6a620
  clusterMember_test.go 0b7abb26623d36c2466676626e48b4be3ceaebc8
  const.go edd739bf3f317c18ca7ec94636671c2486e698e7
- countem 0a0742b7fa37bc5996ae17713a02b686d6735ab3
+ countem 8d99ed7c9fa7e75fadca3f1634e56a373cd79754
  errors.go 09ab5dbf93fcce49350b3aafc7cf3a062e875dd8
  ghpDoc
   css
@@ -76,7 +77,7 @@ xlCluster_go
   pktLayerOptions.go de99d62fb451eae1dc22c7a366eebdd37c0d1659
  styleit 001c8c677b12efde010d7eb2b1b786dc3ef1b1d2
  test.all a089e07bb8b7f7ea5e3cbb604ec459a3741f2b50
- version.go 7f6cf0d8051583c84339f489b4d0f97edd7bfa11
+ version.go b46ba5ca73489897aba6735ffb016afd18a1f990
 # END CONTENT #
 
-ZSotrVUZd/7wFrdF4vRTLyedv2JgU7zlvfz81hbW6SWYWLfbGYIROKS+dsm4ShHb1S4qbPwVS8dI5uesfflkYv27my0tA7/Jf40YJm0uYgV10ZRLfzHtzlMIErI9xXRxy7XFcio5HWVhK1Kv/wki1vgZIYR6C8B6tn86SNTJF8n6SwrPuzOXBaML6g4cmgOnwPbRFXAkZOw/yPvBzxexpdjZpHi9pNB5VN8+qXNhloOvEq1Ew4pe7N7OQBZJJLAMkznYEPQoRAuyjbL8QbrNE06KZgJ3P7z8loBeeBguTugV2bH8FYShOL3KvHl5my0d3JSean/ydM6z+OXEFm7hiQ==
+nkQxAvlps1A7wEu9GBzPj19ct9h2lasB50EAaskFS4vOnP95Aw49P+KrqgM8XDFThSB6In7BXpWbZSiAd2+nDsAnPn7SApP4extHsT8brbAuo8Xf2obgOff4AVGjKhnHyd3HvPjWRTMDcvsyRwHZ6U6DdX6MBauEaDUH8D5FVdT9ICfN/Wm8O/S905adrbG6PD1HOITA6e+8TskhrK6BGeFXmqCO3hWunYcyuUTm8gW9Bi0Ch2z2ud9K/RHBejdUo4VeqDtkLE1uUw6o7sIYIJcSD8CeUMSIhhcNiZ9bjCYm2Dkn7fnyKmCepjIGE/T5pFV/oeTJew5iriPaUijwFQ==
